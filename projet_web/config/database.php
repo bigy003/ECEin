@@ -42,6 +42,11 @@ if ($parsedUrl && isset($parsedUrl['host'])) {
     define('DB_NAME', ltrim($parsedUrl['path'] ?? '', '/') ?: 'railway');
     define('DB_USER', $parsedUrl['user'] ?? 'root');
     define('DB_PASS', $parsedUrl['pass'] ?? '');
+} elseif (file_exists(__DIR__ . '/database.local.php')) {
+    // Config locale non versionnée (ex: identifiants 000webhost).
+    // Utile sur les hébergements mutualisés qui ne permettent pas de définir
+    // des variables d'environnement. Ce fichier N'EST PAS commité (voir .gitignore).
+    require __DIR__ . '/database.local.php';
 } else {
     // Fallback : utiliser les variables individuelles
     // Configuration locale par défaut (MAMP) ou variables d'environnement pour la production

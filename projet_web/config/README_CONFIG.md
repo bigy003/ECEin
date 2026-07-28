@@ -77,11 +77,25 @@ Lors du déploiement sur Railway :
 2. Votre code les détecte automatiquement
 3. Aucune modification nécessaire !
 
+### Sur un hébergement mutualisé (000webhost, etc.)
+
+Ces hébergeurs ne permettent généralement pas de définir des variables
+d'environnement. On utilise donc un fichier de config locale, non versionné :
+
+1. Copiez `config/database.local.example.php` en `config/database.local.php`
+2. Remplacez les valeurs par celles de votre panneau (section "MySQL Databases") :
+   `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`
+3. Uploadez `config/database.local.php` sur le serveur (FTP / File Manager)
+
+`database.local.php` est listé dans `.gitignore` : il ne sera jamais poussé sur
+GitHub, vos identifiants de production restent privés même si le repo est public.
+
 ## 📌 Résumé
 
-| Environnement | Variables d'environnement | Valeurs utilisées |
-|---------------|---------------------------|-------------------|
-| **Local (MAMP)** | ❌ Aucune | Valeurs par défaut (`localhost`, `root`, etc.) |
-| **Railway** | ✅ Automatiques | Variables Railway (`MYSQL_HOST`, etc.) |
+| Environnement | Détection | Valeurs utilisées |
+|---------------|-----------|-------------------|
+| **Local (MAMP)** | ❌ Aucune variable, pas de `database.local.php` | Valeurs par défaut (`localhost`, `root`, etc.) |
+| **Railway** | ✅ Variables d'environnement automatiques | Variables Railway (`MYSQL_HOST`, etc.) |
+| **000webhost / mutualisé** | ✅ Présence de `config/database.local.php` | Valeurs du fichier local |
 
-**Vous n'avez rien à faire, ça fonctionne automatiquement !** 🎉
+**Vous n'avez rien à faire de plus, ça fonctionne automatiquement !** 🎉

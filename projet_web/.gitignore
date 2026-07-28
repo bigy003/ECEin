@@ -32,6 +32,7 @@ database/dump.sql
 
 # Environment
 .env
+config/database.local.php
 
 # PHPUnit
 .phpunit.cache/
