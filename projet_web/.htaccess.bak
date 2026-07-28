@@ -1,0 +1,4 @@
+# Configuration Apache pour ECE In
+
+# Définir index.php comme fichier par défaut
+DirectoryIndex index.php
