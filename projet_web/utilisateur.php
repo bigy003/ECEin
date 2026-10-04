@@ -18,6 +18,11 @@ $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id = ? AND actif = 1");
 $stmt->execute([$profilId]);
 $profil = $stmt->fetch();
 
+// Le compte administrateur est privé : seul un admin peut voir son profil
+if ($profil && $profil['role'] === 'administrateur' && !estAdmin()) {
+    $profil = false;
+}
+
 if (!$profil) {
     http_response_code(404);
     $pageTitle = t('Introuvable');

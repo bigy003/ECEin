@@ -110,6 +110,7 @@ $stmtSugg = $pdo->prepare("
     FROM utilisateurs u
     WHERE u.id != :uid
       AND u.actif = 1
+      AND u.role != 'administrateur'  -- Le compte admin reste privé (jamais suggéré)
       AND u.id NOT IN (
           SELECT CASE WHEN demandeur_id = :uid2 THEN destinataire_id ELSE demandeur_id END
           FROM connexions

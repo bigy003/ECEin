@@ -59,6 +59,7 @@ $stmtSuggestions = $pdo->prepare("
     WHERE (c1.demandeur_id = :uid4 OR c1.destinataire_id = :uid5)
       AND c1.statut = 'accepte'
       AND u.id != :uid6
+      AND u.role != 'administrateur'
       AND u.id NOT IN (
           SELECT CASE WHEN demandeur_id = :uid7 THEN destinataire_id ELSE demandeur_id END
           FROM connexions WHERE (demandeur_id = :uid8 OR destinataire_id = :uid9)

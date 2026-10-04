@@ -19,7 +19,7 @@ if (!empty($q) && strlen($q) >= 2) {
 
     $stmt = $pdo->prepare("
         SELECT id, nom, prenom, pseudo, photo, titre, localisation
-        FROM utilisateurs WHERE actif = 1 AND id != ?
+        FROM utilisateurs WHERE actif = 1 AND id != ? AND role != 'administrateur'
           AND (nom LIKE ? OR prenom LIKE ? OR pseudo LIKE ? OR titre LIKE ?)
         LIMIT 10
     ");

@@ -51,8 +51,8 @@ if ($action === 'envoyer_demande') {
     }
 
     // Vérifier que le destinataire existe et est actif
-    // On ne peut envoyer des demandes qu'aux utilisateurs actifs
-    $stmtUser = $pdo->prepare("SELECT id, prenom, nom FROM utilisateurs WHERE id = ? AND actif = 1");
+    // On ne peut envoyer des demandes qu'aux utilisateurs actifs (et jamais au compte admin, qui est privé)
+    $stmtUser = $pdo->prepare("SELECT id, prenom, nom FROM utilisateurs WHERE id = ? AND actif = 1 AND role != 'administrateur'");
     $stmtUser->execute([$destinataireId]);
     $destinataire = $stmtUser->fetch();
 
