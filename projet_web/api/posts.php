@@ -52,13 +52,13 @@ if ($action === 'publier') {
     // Les types valides sont : statut (texte), photo, video, cv, evenement
     $typesValides = ['statut', 'photo', 'video', 'cv', 'evenement'];
     if (!in_array($type, $typesValides)) {
-        echo json_encode(['succes' => false, 'message' => 'Type de publication invalide.']);
+        echo json_encode(['succes' => false, 'message' => t('Type de publication invalide.')]);
         exit();
     }
 
     // Validation : le post doit avoir du contenu texte OU un fichier
     if (empty($contenu) && !isset($_FILES['fichier'])) {
-        echo json_encode(['succes' => false, 'message' => 'Le contenu ne peut pas être vide.']);
+        echo json_encode(['succes' => false, 'message' => t('Le contenu ne peut pas être vide.')]);
         exit();
     }
 
@@ -77,7 +77,7 @@ if ($action === 'publier') {
         } elseif (in_array($file['type'], CV_TYPES) && $file['size'] <= MAX_CV_SIZE) {
             $dossier = 'cvs'; // Documents PDF pour les CV
         } else {
-            echo json_encode(['succes' => false, 'message' => 'Type ou taille de fichier non autorisé.']);
+            echo json_encode(['succes' => false, 'message' => t('Type ou taille de fichier non autorisé.')]);
             exit();
         }
 
@@ -113,7 +113,7 @@ if ($action === 'publier') {
         'succes'  => true,
         'post_id' => $postId,
         'post'    => $post,
-        'message' => 'Publication créée avec succès !',
+        'message' => t('Publication créée avec succès !'),
     ]);
     exit();
 }
@@ -150,18 +150,18 @@ if ($action === 'modifier') {
     $post = $stmt->fetch();
 
     if (!$post) {
-        echo json_encode(['succes' => false, 'message' => 'Publication introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Publication introuvable.')]);
         exit();
     }
 
     // Vérifier propriétaire ou admin
     if ($post['utilisateur_id'] != $userId && !estAdmin()) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
 
     if (empty($contenu) && !$post['fichier']) {
-        echo json_encode(['succes' => false, 'message' => 'Le contenu ne peut pas être vide.']);
+        echo json_encode(['succes' => false, 'message' => t('Le contenu ne peut pas être vide.')]);
         exit();
     }
 
@@ -179,7 +179,7 @@ if ($action === 'modifier') {
         } elseif (in_array($file['type'], CV_TYPES) && $file['size'] <= MAX_CV_SIZE) {
             $dossier = 'cvs';
         } else {
-            echo json_encode(['succes' => false, 'message' => 'Type ou taille de fichier non autorisé.']);
+            echo json_encode(['succes' => false, 'message' => t('Type ou taille de fichier non autorisé.')]);
             exit();
         }
 
@@ -217,7 +217,7 @@ if ($action === 'modifier') {
     echo json_encode([
         'succes'  => true,
         'post'    => $postModifie,
-        'message' => 'Publication modifiée avec succès !',
+        'message' => t('Publication modifiée avec succès !'),
     ]);
     exit();
 }
@@ -231,13 +231,13 @@ if ($action === 'supprimer') {
     $post = $stmt->fetch();
 
     if (!$post) {
-        echo json_encode(['succes' => false, 'message' => 'Publication introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Publication introuvable.')]);
         exit();
     }
 
     // Vérifier propriétaire ou admin
     if ($post['utilisateur_id'] != $userId && !estAdmin()) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
 
@@ -248,7 +248,7 @@ if ($action === 'supprimer') {
 
     $pdo->prepare("DELETE FROM publications WHERE id = ?")->execute([$postId]);
 
-    echo json_encode(['succes' => true, 'message' => 'Publication supprimée.']);
+    echo json_encode(['succes' => true, 'message' => t('Publication supprimée.')]);
     exit();
 }
 
@@ -307,7 +307,7 @@ if ($action === 'reagir') {
         'succes'      => true,
         'etat'        => $etat,
         'nb_reactions' => $count,
-        'message'     => 'Réaction enregistrée.',
+        'message'     => t('Réaction enregistrée.'),
     ]);
     exit();
 }
@@ -318,7 +318,7 @@ if ($action === 'commenter') {
     $contenu = trim($_POST['contenu'] ?? '');
 
     if (empty($contenu)) {
-        echo json_encode(['succes' => false, 'message' => 'Le commentaire ne peut pas être vide.']);
+        echo json_encode(['succes' => false, 'message' => t('Le commentaire ne peut pas être vide.')]);
         exit();
     }
 
@@ -399,12 +399,12 @@ if ($action === 'modifier_commentaire') {
     $contenu = trim($_POST['contenu'] ?? '');
 
     if (empty($contenu)) {
-        echo json_encode(['succes' => false, 'message' => 'Le commentaire ne peut pas être vide.']);
+        echo json_encode(['succes' => false, 'message' => t('Le commentaire ne peut pas être vide.')]);
         exit();
     }
 
     if (!$commentaireId) {
-        echo json_encode(['succes' => false, 'message' => 'Commentaire introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Commentaire introuvable.')]);
         exit();
     }
 
@@ -419,19 +419,19 @@ if ($action === 'modifier_commentaire') {
     $commentaire = $stmt->fetch();
 
     if (!$commentaire) {
-        echo json_encode(['succes' => false, 'message' => 'Commentaire introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Commentaire introuvable.')]);
         exit();
     }
 
     // Vérifier que le commentaire appartient à l'utilisateur
     if ($commentaire['utilisateur_id'] != $userId) {
-        echo json_encode(['succes' => false, 'message' => 'Vous n\'êtes pas autorisé à modifier ce commentaire.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous n\'êtes pas autorisé à modifier ce commentaire.')]);
         exit();
     }
 
     // Vérifier que le délai de 30 secondes n'est pas dépassé
     if ($commentaire['secondes_ecoulees'] > 30) {
-        echo json_encode(['succes' => false, 'message' => 'Le délai de modification (30 secondes) est dépassé.']);
+        echo json_encode(['succes' => false, 'message' => t('Le délai de modification (30 secondes) est dépassé.')]);
         exit();
     }
 
@@ -452,7 +452,7 @@ if ($action === 'modifier_commentaire') {
     echo json_encode([
         'succes' => true,
         'commentaire' => $commentaireModifie,
-        'message' => 'Commentaire modifié avec succès.',
+        'message' => t('Commentaire modifié avec succès.'),
     ]);
     exit();
 }
@@ -481,8 +481,8 @@ if ($action === 'partager') {
         );
     }
 
-    echo json_encode(['succes' => true, 'message' => 'Publication partagée !']);
+    echo json_encode(['succes' => true, 'message' => t('Publication partagée !')]);
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

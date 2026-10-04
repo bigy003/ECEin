@@ -67,7 +67,7 @@ $(document).ready(function () {
             peer.on('error', function (err) {
                 console.warn('[ECE In] PeerJS:', err.type);
                 if (err.type === 'peer-unavailable') {
-                    afficherToast('L\'utilisateur n\'est pas joignable actuellement.', 'warning');
+                    afficherToast(t('L\'utilisateur n\'est pas joignable actuellement.'), 'warning');
                     terminerAppelUI();
                 } else if (err.type === 'unavailable-id') {
                     setTimeout(function () {
@@ -96,7 +96,7 @@ $(document).ready(function () {
 
     window.lancerAppel = function (type) {
         if (!peer || peer.disconnected) {
-            afficherToast('Connexion au serveur d\'appels en cours, réessayez.', 'warning');
+            afficherToast(t('Connexion au serveur d\'appels en cours, réessayez.'), 'warning');
             return;
         }
         if (!CONTACT_ID || currentCallId) return;
@@ -126,7 +126,7 @@ $(document).ready(function () {
                             clearInterval(callStatusInterval);
                             callStatusInterval = null;
                             stopRingtone();
-                            afficherToast('Appel refusé ou non répondu.', 'info');
+                            afficherToast(t('Appel refusé ou non répondu.'), 'info');
                             terminerAppelUI();
                         }
                     });
@@ -139,13 +139,13 @@ $(document).ready(function () {
                         if (currentCallId) {
                             $.post('api/calls.php', { action: 'terminer', appel_id: currentCallId });
                             stopRingtone();
-                            afficherToast('Pas de réponse.', 'info');
+                            afficherToast(t('Pas de réponse.'), 'info');
                             terminerAppelUI();
                         }
                     }
                 }, 30000);
             } else {
-                afficherToast(res.message || 'Erreur lors de l\'appel.', 'danger');
+                afficherToast(res.message || t('Erreur lors de l\'appel.'), 'danger');
                 terminerAppelUI();
             }
         });
@@ -154,7 +154,7 @@ $(document).ready(function () {
     // Fonction pour lancer un appel de groupe
     window.lancerAppelGroupeDirect = function (type, conversationId) {
         if (!peer || peer.disconnected) {
-            afficherToast('Connexion au serveur d\'appels en cours, réessayez.', 'warning');
+            afficherToast(t('Connexion au serveur d\'appels en cours, réessayez.'), 'warning');
             return;
         }
         if (currentCallId) return;
@@ -171,7 +171,7 @@ $(document).ready(function () {
             if (res.succes) {
                 currentCallId = res.appel_id || (res.appel_ids && res.appel_ids[0]) || 0;
                 startRingtone();
-                afficherToast('Appel de groupe lancé. Les participants sont en train d\'être appelés...', 'info');
+                afficherToast(t('Appel de groupe lancé. Les participants sont en train d\'être appelés...'), 'info');
 
                 // Charger immédiatement tous les participants du groupe
                 chargerParticipantsAppelGroupe(conversationId);
@@ -222,7 +222,7 @@ $(document).ready(function () {
                     }
                 }, 60000); // 60 secondes pour un appel de groupe
             } else {
-                afficherToast(res.message || 'Erreur lors du lancement de l\'appel de groupe.', 'danger');
+                afficherToast(res.message || t('Erreur lors du lancement de l\'appel de groupe.'), 'danger');
                 terminerAppelUI();
             }
         });
@@ -262,7 +262,7 @@ $(document).ready(function () {
         currentCallId = appel.id;
         currentCallType = appel.type;
 
-        $('#call-avatar').attr('src', appel.photo || 'assets/images/default_avatar.jpeg');
+        $('#call-avatar').attr('src', appel.photo || 'assets/images/default_avatar.svg');
         $('#call-name').text(appel.prenom + ' ' + appel.nom);
         showCallOverlay('incoming', appel.type);
         startRingtone();
@@ -344,7 +344,7 @@ $(document).ready(function () {
                     if (currentCall) {
                         handleCallStream(currentCall, type);
                     } else {
-                        afficherToast('Impossible de joindre l\'utilisateur.', 'warning');
+                        afficherToast(t('Impossible de joindre l\'utilisateur.'), 'warning');
                         terminerAppelCleanup();
                     }
                 } else {
@@ -366,7 +366,7 @@ $(document).ready(function () {
                                 window._incomingPeerCall = null;
                             } else if (waitCount > 10) {
                                 clearInterval(waitPeer);
-                                afficherToast('Connexion audio/vidéo en attente...', 'info');
+                                afficherToast(t('Connexion audio/vidéo en attente...'), 'info');
                             }
                         }, 500);
                     }
@@ -374,7 +374,7 @@ $(document).ready(function () {
             })
             .catch(function (err) {
                 console.error('[ECE In] Erreur média:', err);
-                afficherToast('Impossible d\'accéder au micro/caméra. Vérifiez les permissions du navigateur.', 'danger');
+                afficherToast(t('Impossible d\'accéder au micro/caméra. Vérifiez les permissions du navigateur.'), 'danger');
                 if (currentCallId) {
                     $.post('api/calls.php', { action: 'terminer', appel_id: currentCallId });
                 }
@@ -421,12 +421,12 @@ $(document).ready(function () {
         });
 
         call.on('close', function () {
-            afficherToast('Appel terminé.', 'info');
+            afficherToast(t('Appel terminé.'), 'info');
             terminerAppelCleanup();
         });
 
         call.on('error', function () {
-            afficherToast('Erreur durant l\'appel.', 'danger');
+            afficherToast(t('Erreur durant l\'appel.'), 'danger');
             terminerAppelCleanup();
         });
     }
@@ -473,18 +473,18 @@ $(document).ready(function () {
         $('#call-info').show();
         
         if (mode !== 'incoming' && typeof CONTACT_NAME !== 'undefined') {
-            $('#call-avatar').attr('src', CONTACT_PHOTO || 'assets/images/default_avatar.jpeg');
+            $('#call-avatar').attr('src', CONTACT_PHOTO || 'assets/images/default_avatar.svg');
             $('#call-name').text(CONTACT_NAME);
         }
 
         $('#call-controls-active, #call-controls-incoming, #call-controls-outgoing').hide();
 
         if (mode === 'incoming') {
-            $('#call-status').text(type === 'video' ? 'Appel vidéo entrant...' : 'Appel audio entrant...');
+            $('#call-status').text(type === 'video' ? t('Appel vidéo entrant...') : t('Appel audio entrant...'));
             $('#call-controls-incoming').show();
             $overlay.addClass('call-ringing');
         } else if (mode === 'outgoing') {
-            $('#call-status').text('Appel en cours...');
+            $('#call-status').text(t('Appel en cours...'));
             $('#call-controls-outgoing').show();
             $overlay.removeClass('call-ringing');
             // Masquer le bouton "Ajouter une personne" pour les appels de groupe
@@ -495,7 +495,7 @@ $(document).ready(function () {
                 chargerParticipantsAppel();
             }
         } else if (mode === 'active') {
-            $('#call-status').text('En communication');
+            $('#call-status').text(t('En communication'));
             $('#call-timer').show();
             $('#call-controls-active').show();
             $overlay.removeClass('call-ringing');
@@ -570,7 +570,7 @@ $(document).ready(function () {
     window.ouvrirModalAjouterParticipant = function() {
         
         if (!currentCallId) {
-            afficherToast('Aucun appel en cours.', 'warning');
+            afficherToast(t('Aucun appel en cours.'), 'warning');
             return;
         }
         
@@ -580,7 +580,7 @@ $(document).ready(function () {
             appel_id: currentCallId
         }, function(res) {
             if (!res.succes) {
-                afficherToast('Erreur lors du chargement des participants.', 'danger');
+                afficherToast(t('Erreur lors du chargement des participants.'), 'danger');
                 return;
             }
             
@@ -609,7 +609,7 @@ $(document).ready(function () {
                     }
                     contactsDisponibles++;
                     html += '<div class="d-flex align-items-center gap-2 p-2 hover-bg rounded-3 mb-2" style="cursor:pointer" onclick="ajouterParticipantAppel(' + contact.id + ', \'' + escapeHtml(contact.prenom + ' ' + contact.nom) + '\')">';
-                    html += '<img src="' + escapeHtml(contact.photo || 'assets/images/default_avatar.jpeg') + '" alt="" class="rounded-circle" width="40" height="40" style="object-fit:cover">';
+                    html += '<img src="' + escapeHtml(contact.photo || 'assets/images/default_avatar.svg') + '" alt="" class="rounded-circle" width="40" height="40" style="object-fit:cover">';
                     html += '<div class="flex-grow-1">';
                     html += '<div class="fw-semibold small">' + escapeHtml(contact.prenom + ' ' + contact.nom) + '</div>';
                     html += '<div style="font-size:.72rem;color:var(--text-3)">' + escapeHtml(contact.titre || '') + '</div>';
@@ -620,7 +620,7 @@ $(document).ready(function () {
             }
             
             if (contactsDisponibles === 0) {
-                html = '<p class="text-center text-muted py-4">Aucun contact disponible à ajouter.</p>';
+                html = '<p class="text-center text-muted py-4">' + t('Aucun contact disponible à ajouter.') + '</p>';
             }
             
             $('#liste-contacts-appel').html(html);
@@ -641,7 +641,7 @@ $(document).ready(function () {
             var modalElement = document.getElementById('modalAjouterParticipant');
         if (!modalElement) {
             console.error('Modal modalAjouterParticipant introuvable');
-            afficherToast('Erreur: modal introuvable', 'danger');
+            afficherToast(t('Erreur : fenêtre introuvable'), 'danger');
             return;
         }
         
@@ -695,7 +695,7 @@ $(document).ready(function () {
             }, 50);
         }
         }).fail(function() {
-            afficherToast('Erreur lors du chargement des participants.', 'danger');
+            afficherToast(t('Erreur lors du chargement des participants.'), 'danger');
         });
     };
     
@@ -708,17 +708,17 @@ $(document).ready(function () {
             participant_id: participantId
         }, function(res) {
             if (res.succes) {
-                afficherToast(participantName + ' a été invité à l\'appel.', 'success');
+                afficherToast(t('%s a été invité à l\'appel.', participantName), 'success');
                 var modal = bootstrap.Modal.getInstance(document.getElementById('modalAjouterParticipant'));
                 if (modal) modal.hide();
                 
                 // Rafraîchir l'affichage des participants
                 chargerParticipantsAppel();
             } else {
-                afficherToast(res.message || 'Erreur lors de l\'ajout.', 'danger');
+                afficherToast(res.message || t('Erreur lors de l\'ajout.'), 'danger');
             }
         }).fail(function() {
-            afficherToast('Erreur lors de l\'ajout du participant.', 'danger');
+            afficherToast(t('Erreur lors de l\'ajout du participant.'), 'danger');
         });
     };
     
@@ -751,10 +751,10 @@ $(document).ready(function () {
         // Participant local (vous)
         html += '<div class="call-participant" data-participant-id="' + USER_ID + '">';
         html += '<video id="local-participant-video" autoplay playsinline muted class="call-participant-video" style="display:none;"></video>';
-        html += '<img src="' + escapeHtml((typeof USER_PHOTO !== 'undefined' ? USER_PHOTO : 'assets/images/default_avatar.jpeg')) + '" alt="" class="call-participant-avatar">';
+        html += '<img src="' + escapeHtml((typeof USER_PHOTO !== 'undefined' ? USER_PHOTO : 'assets/images/default_avatar.svg')) + '" alt="" class="call-participant-avatar">';
         html += '<div class="call-participant-info">';
-        html += '<div class="call-participant-name">Vous</div>';
-        html += '<div class="call-participant-status">En ligne</div>';
+        html += '<div class="call-participant-name">' + t('Vous') + '</div>';
+        html += '<div class="call-participant-status">' + t('En ligne') + '</div>';
         html += '</div>';
         html += '</div>';
         
@@ -764,18 +764,18 @@ $(document).ready(function () {
             
             html += '<div class="call-participant" data-participant-id="' + participant.utilisateur_id + '">';
             html += '<video class="call-participant-video remote-participant-video" autoplay playsinline style="display:none;" data-peer-id="ecein_' + participant.utilisateur_id + '"></video>';
-            html += '<img src="' + escapeHtml(participant.photo || 'assets/images/default_avatar.jpeg') + '" alt="" class="call-participant-avatar">';
+            html += '<img src="' + escapeHtml(participant.photo || 'assets/images/default_avatar.svg') + '" alt="" class="call-participant-avatar">';
             html += '<div class="call-participant-info">';
             html += '<div class="call-participant-name">' + escapeHtml(participant.prenom + ' ' + participant.nom) + '</div>';
             html += '<div class="call-participant-status">';
             if (participant.statut === 'invite') {
-                html += 'Invitation envoyée';
+                html += t('Invitation envoyée');
             } else if (participant.statut === 'en_cours') {
-                html += 'En ligne';
+                html += t('En ligne');
             } else if (participant.statut === 'refuse') {
-                html += 'Refusé';
+                html += t('Refusé');
             } else {
-                html += 'En attente';
+                html += t('En attente');
             }
             html += '</div>';
             html += '</div>';
@@ -925,7 +925,7 @@ $(document).ready(function () {
         var now = Math.floor(Date.now() / 1000);
         
         if (now - dateEnvoi > 30) {
-            afficherToast("Le délai de 30 secondes pour modifier ce message est écoulé.", "warning");
+            afficherToast(t('Le délai de 30 secondes pour modifier ce message est écoulé.'), 'warning');
             $msgWrapper.find('.btn-edit-msg').hide();
             return;
         }
@@ -944,7 +944,7 @@ $(document).ready(function () {
     };
 
     window.supprimerMessage = function(msgId) {
-        if (!confirm("Voulez-vous vraiment supprimer ce message ?")) return;
+        if (!confirm(t('Voulez-vous vraiment supprimer ce message ?'))) return;
         
         $.post('api/messages.php', {
             action: 'supprimer',
@@ -953,7 +953,7 @@ $(document).ready(function () {
             if (res.succes) {
                 var $msg = $('#msg-content-' + msgId);
                 $msg.addClass('fst-italic text-muted');
-                $msg.html('<div><i class="bi bi-slash-circle me-1"></i> Ce message a été supprimé.</div>');
+                $msg.html('<div><i class="bi bi-slash-circle me-1"></i> ' + t('Ce message a été supprimé.') + '</div>');
                 $('.message-wrapper[data-msg-id="' + msgId + '"] .message-actions').remove();
             } else {
                 afficherToast(res.message, 'danger');
@@ -991,7 +991,7 @@ $(document).ready(function () {
                     var $msgContent = $('#msg-content-' + editMsgId);
                     $msgContent.find('.msg-text').html(escapeHtml(res.nouveau_contenu).replace(/\n/g, '<br>'));
                     if ($msgContent.find('small.text-white-50').length === 0) {
-                        $msgContent.append('<small class="text-white-50" style="font-size: 0.65rem;">(modifié)</small>');
+                        $msgContent.append('<small class="text-white-50" style="font-size: 0.65rem;">(' + t('modifié') + ')</small>');
                     }
                     annulerEdit();
                 } else {
@@ -1024,7 +1024,7 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                afficherToast('Erreur lors de l\'envoi du message.', 'danger');
+                afficherToast(t('Erreur lors de l\'envoi du message.'), 'danger');
             },
             complete: function () {
                 $btn.prop('disabled', false);
@@ -1132,8 +1132,8 @@ $(document).ready(function () {
 
         if (estMoi) {
             html += '<div class="message-actions me-2 d-flex flex-column gap-1" style="opacity: 0; transition: opacity 0.2s;">' +
-                    '<button class="btn btn-sm btn-light py-0 px-1 btn-edit-msg" title="Modifier" onclick="editerMessage(' + msg.id + ')"><i class="bi bi-pencil" style="font-size:0.75rem;"></i></button>' +
-                    '<button class="btn btn-sm btn-light py-0 px-1 text-danger btn-delete-msg" title="Supprimer" onclick="supprimerMessage(' + msg.id + ')"><i class="bi bi-trash" style="font-size:0.75rem;"></i></button>' +
+                    '<button class="btn btn-sm btn-light py-0 px-1 btn-edit-msg" title="' + t('Modifier') + '" onclick="editerMessage(' + msg.id + ')"><i class="bi bi-pencil" style="font-size:0.75rem;"></i></button>' +
+                    '<button class="btn btn-sm btn-light py-0 px-1 text-danger btn-delete-msg" title="' + t('Supprimer') + '" onclick="supprimerMessage(' + msg.id + ')"><i class="bi bi-trash" style="font-size:0.75rem;"></i></button>' +
                     '</div>';
         }
 
@@ -1144,7 +1144,7 @@ $(document).ready(function () {
             var imgExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
             html += '<div class="mb-2">';
             if (imgExts.includes(ext)) {
-                html += '<a href="' + escapeHtml(msg.fichier_joint) + '" target="_blank"><img src="' + escapeHtml(msg.fichier_joint) + '" alt="Pièce jointe" class="img-fluid rounded" style="max-height: 200px;"></a>';
+                html += '<a href="' + escapeHtml(msg.fichier_joint) + '" target="_blank"><img src="' + escapeHtml(msg.fichier_joint) + '" alt="' + t('Pièce jointe') + '" class="img-fluid rounded" style="max-height: 200px;"></a>';
             } else {
                 html += '<a href="' + escapeHtml(msg.fichier_joint) + '" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 p-2 bg-light rounded text-dark" style="background: rgba(255,255,255,0.2) !important;">' +
                         '<i class="bi bi-file-earmark-text fs-4"></i>' +

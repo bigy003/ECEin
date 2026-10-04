@@ -45,13 +45,80 @@ if (session_status() === PHP_SESSION_NONE) {
 // Ce fichier contient la fonction getDB() pour se connecter à MySQL
 require_once __DIR__ . '/database.php';
 
+// ===================== LANGUE (FR / EN) =====================
+/**
+ * Langue de l'interface : français par défaut, anglais au choix
+ *
+ * - On change de langue avec ?lang=fr ou ?lang=en sur n'importe quelle page
+ * - Le choix est mémorisé en session + cookie (1 an), même déconnecté
+ * - Les textes sont traduits avec t('Texte en français') -> voir lang/en.php
+ */
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'], true)) {
+    $_SESSION['lang'] = $_GET['lang'];
+    if (php_sapi_name() !== 'cli') {
+        setcookie('ecein_lang', $_GET['lang'], ['expires' => time() + 31536000, 'path' => '/', 'samesite' => 'Lax']);
+        // Recharger la même page sans le paramètre ?lang= pour garder des URLs propres
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $params = $_GET;
+            unset($params['lang']);
+            $url = strtok($_SERVER['REQUEST_URI'], '?') . ($params ? '?' . http_build_query($params) : '');
+            header("Location: $url");
+            exit();
+        }
+    }
+}
+$langue = $_SESSION['lang'] ?? $_COOKIE['ecein_lang'] ?? 'fr';
+define('LANG', in_array($langue, ['fr', 'en'], true) ? $langue : 'fr');
+
+/**
+ * Traduit un texte de l'interface dans la langue choisie
+ *
+ * La clé est le texte français lui-même : si une traduction manque, le français s'affiche.
+ * Accepte des paramètres façon sprintf : t('Bonjour %s', $prenom)
+ *
+ * @param string $fr      Texte en français
+ * @param mixed  ...$args Valeurs à insérer (%s, %d)
+ * @return string Texte traduit
+ */
+function t(string $fr, ...$args): string {
+    $texte = $fr;
+    if (LANG === 'en') {
+        $dico = traductions();
+        $texte = $dico[$fr] ?? $fr;
+    }
+    return $args ? sprintf($texte, ...$args) : $texte;
+}
+
+/**
+ * Charge le dictionnaire anglais (une seule fois par page)
+ * @return array ['texte français' => 'English text']
+ */
+function traductions(): array {
+    static $dico = null;
+    if ($dico === null) {
+        $dico = require dirname(__DIR__) . '/lang/en.php';
+    }
+    return $dico;
+}
+
+/**
+ * URL de la page courante avec la langue demandée (pour le bouton FR / EN)
+ * @param string $lang 'fr' ou 'en'
+ * @return string
+ */
+function urlLangue(string $lang): string {
+    $params = $_GET;
+    $params['lang'] = $lang;
+    return strtok($_SERVER['REQUEST_URI'] ?? '', '?') . '?' . http_build_query($params);
+}
+
 // ===================== INFORMATIONS DU SITE =====================
 /**
  * Constantes définissant les informations générales du site
  * Utilisées dans les en-têtes, pieds de page, emails, etc.
  */
 define('SITE_NOM', 'ECE In');
-define('SITE_SLOGAN', 'Le réseau social professionnel de la communauté ECE Paris');
+define('SITE_SLOGAN', t('Le réseau social professionnel de la communauté ECE Paris'));
 define('SITE_EMAIL', 'contact@ecein.ece.fr');
 define('SITE_TEL', '+33 1 44 39 06 00');
 define('SITE_ADRESSE', '37 Quai de Grenelle, 75015 Paris');
@@ -190,6 +257,33 @@ function h(string $data): string {
 }
 
 /**
+ * Génère un avatar SVG avec les initiales de l'utilisateur (ex: "SA" pour Sternritter Agency)
+ *
+ * Remplace l'ancienne photo par défaut : chaque nouvel inscrit reçoit un rond coloré
+ * avec ses initiales. La couleur dépend de l'id, donc elle reste stable pour un même compte.
+ *
+ * @param int    $userId ID de l'utilisateur
+ * @param string $prenom Prénom
+ * @param string $nom    Nom
+ * @return string Chemin relatif de l'avatar (à stocker dans utilisateurs.photo)
+ */
+function genererAvatarInitiales(int $userId, string $prenom, string $nom): string {
+    $couleurs = ['#02B8C5', '#6C5CE7', '#E17055', '#00B894', '#0984E3', '#D63031', '#E84393', '#FDCB6E', '#2D3436', '#00CEC9'];
+    $couleur  = $couleurs[$userId % count($couleurs)];
+    $initiales = mb_strtoupper(mb_substr(trim($prenom), 0, 1) . mb_substr(trim($nom), 0, 1));
+
+    $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">'
+         . '<rect width="256" height="256" fill="' . $couleur . '"/>'
+         . '<text x="50%" y="50%" dy=".35em" text-anchor="middle" fill="#fff" '
+         . 'font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="104" font-weight="600">'
+         . htmlspecialchars($initiales, ENT_XML1, 'UTF-8') . '</text></svg>';
+
+    $chemin = 'uploads/avatars/initiales_' . $userId . '.svg';
+    file_put_contents(BASE_PATH . '/' . $chemin, $svg);
+    return $chemin;
+}
+
+/**
  * Récupère les informations complètes de l'utilisateur connecté
  * 
  * Utilise un cache statique pour éviter de multiples requêtes SQL
@@ -280,6 +374,9 @@ function formatDateFr(string $date): string {
         9 => 'septembre', 10 => 'octobre', 11 => 'novembre', 12 => 'décembre'
     ];
     $ts = strtotime($date);
+    if (LANG === 'en') {
+        return date('F j, Y', $ts); // ex: October 4, 2026
+    }
     return date('j', $ts) . ' ' . $mois[(int)date('n', $ts)] . ' ' . date('Y', $ts);
 }
 
@@ -294,8 +391,38 @@ function tempsEcoule(string $date): string {
     if ($diff < 86400) {
         return date('H:i', strtotime($date));
     }
-    if ($diff < 604800) return floor($diff / 86400) . ' j';
+    if ($diff < 604800) return floor($diff / 86400) . (LANG === 'en' ? 'd' : ' j');
     return formatDateFr($date);
+}
+
+/**
+ * Libellé lisible (et traduit) d'un type d'offre d'emploi
+ * @param string $type Valeur en base (stage, alternance, cdi, cdd, freelance, benevole)
+ * @return string Ex : "Stage" en français, "Internship" en anglais
+ */
+function libelleTypeEmploi(string $type): string {
+    $libelles = [
+        'stage' => t('Stage'), 'alternance' => t('Alternance'), 'cdi' => t('CDI'),
+        'cdd' => t('CDD'), 'freelance' => t('Freelance'), 'benevole' => t('Bénévolat'),
+    ];
+    return $libelles[$type] ?? ucfirst($type);
+}
+
+/**
+ * Traduit le texte d'une notification (stocké en français en base) à l'affichage
+ * Ex : "Lucas Martin a commenté votre publication." -> "Lucas Martin commented on your post."
+ * @param string $message Texte de la notification
+ * @return string
+ */
+function traduireNotification(string $message): string {
+    if (LANG !== 'en') return $message;
+    return strtr($message, [
+        ' souhaite se connecter avec vous.' => ' wants to connect with you.',
+        ' a accepté votre invitation.'      => ' accepted your invitation.',
+        ' a réagi à votre publication.'     => ' reacted to your post.',
+        ' a commenté votre publication.'    => ' commented on your post.',
+        ' a partagé votre publication.'     => ' shared your post.',
+    ]);
 }
 
 /**
@@ -319,12 +446,12 @@ function getJourSpecial(): array {
     $mois = (int) date('n');
 
     $joursSpeciaux = [
-        ['mois' => 2, 'jour' => 14, 'theme' => 'saint-valentin', 'message' => '💝 Bonne Saint-Valentin à tous !'],
-        ['mois' => 5, 'jour_range' => [25, 31], 'semaine' => 0, 'theme' => 'fete-meres', 'message' => '🌸 Bonne Fête des Mères !'],
-        ['mois' => 6, 'jour_range' => [15, 21], 'semaine' => 0, 'theme' => 'fete-peres', 'message' => '👔 Bonne Fête des Pères !'],
-        ['mois' => 12, 'jour' => 25, 'theme' => 'noel', 'message' => '🎄 Joyeux Noël à tous !'],
-        ['mois' => 12, 'jour' => 31, 'theme' => 'nouvel-an', 'message' => '🎆 Bonne Année 2027 !'],
-        ['mois' => 1, 'jour' => 1, 'theme' => 'nouvel-an', 'message' => '🎉 Bonne Année !'],
+        ['mois' => 2, 'jour' => 14, 'theme' => 'saint-valentin', 'message' => t('💝 Bonne Saint-Valentin à tous !')],
+        ['mois' => 5, 'jour_range' => [25, 31], 'semaine' => 0, 'theme' => 'fete-meres', 'message' => t('🌸 Bonne Fête des Mères !')],
+        ['mois' => 6, 'jour_range' => [15, 21], 'semaine' => 0, 'theme' => 'fete-peres', 'message' => t('👔 Bonne Fête des Pères !')],
+        ['mois' => 12, 'jour' => 25, 'theme' => 'noel', 'message' => t('🎄 Joyeux Noël à tous !')],
+        ['mois' => 12, 'jour' => 31, 'theme' => 'nouvel-an', 'message' => t('🎆 Bonne Année 2027 !')],
+        ['mois' => 1, 'jour' => 1, 'theme' => 'nouvel-an', 'message' => t('🎉 Bonne Année !')],
     ];
 
     foreach ($joursSpeciaux as $special) {

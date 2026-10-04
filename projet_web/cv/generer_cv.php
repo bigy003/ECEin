@@ -103,14 +103,15 @@ $moisFr = [
 function formatCVDate($date) {
     global $moisFr;
     if (!$date) return '';
+    if (LANG === 'en') return date('M Y', strtotime($date));
     return $moisFr[(int)date('n', strtotime($date))] . ' ' . date('Y', strtotime($date));
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= LANG ?>">
 <head>
     <meta charset="UTF-8">
-    <title>CV – <?= h($user['prenom'] . ' ' . $user['nom']) ?></title>
+    <title>CV · <?= h($user['prenom'] . ' ' . $user['nom']) ?></title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -213,10 +214,10 @@ function formatCVDate($date) {
     <?php if ($preview): ?>
     <div class="no-print" style="margin-bottom:16px">
         <button class="btn-print" onclick="window.print()">
-            🖨 Imprimer / Enregistrer en PDF
+            🖨 <?= t('Imprimer / Enregistrer en PDF') ?>
         </button>
         <a href="generer_cv.php?format=xml"
-           style="margin-left:8px;font-size:12px;color:#02B8C5">⬇ Exporter en XML</a>
+           style="margin-left:8px;font-size:12px;color:#02B8C5">⬇ <?= t('Exporter en XML') ?></a>
     </div>
     <?php endif; ?>
 
@@ -231,7 +232,7 @@ function formatCVDate($date) {
             $photoSrc = BASE_PATH . '/' . $user['photo'];
             if (file_exists($photoSrc)):
         ?>
-        <img src="<?= h($photoPath) ?>" alt="Photo de profil" class="cv-photo">
+        <img src="<?= h($photoPath) ?>" alt="<?= t('Photo de profil') ?>" class="cv-photo">
         <?php else: ?>
         <div class="cv-photo-placeholder">
             <?= strtoupper(mb_substr($user['prenom'], 0, 1) . mb_substr($user['nom'], 0, 1)) ?>
@@ -267,19 +268,19 @@ function formatCVDate($date) {
 
     <?php if ($user['biographie']): ?>
     <div class="cv-section">
-        <div class="cv-section-title">Profil</div>
+        <div class="cv-section-title"><?= t('Profil') ?></div>
         <p class="cv-bio"><?= nl2br(h($user['biographie'])) ?></p>
     </div>
     <?php endif; ?>
 
     <?php if (!empty($formations)): ?>
     <div class="cv-section">
-        <div class="cv-section-title">Formation</div>
+        <div class="cv-section-title"><?= t('Formation') ?></div>
         <?php foreach ($formations as $f): ?>
         <div class="cv-item">
             <div class="cv-item-dates">
                 <?= formatCVDate($f['date_debut']) ?> –
-                <?= $f['en_cours'] ? 'Présent' : formatCVDate($f['date_fin']) ?>
+                <?= $f['en_cours'] ? t('Présent') : formatCVDate($f['date_fin']) ?>
             </div>
             <div class="cv-item-content">
                 <div class="cv-item-title"><?= h($f['diplome']) ?></div>
@@ -298,19 +299,19 @@ function formatCVDate($date) {
 
     <?php if (!empty($projets)): ?>
     <div class="cv-section">
-        <div class="cv-section-title">Projets</div>
+        <div class="cv-section-title"><?= t('Projets') ?></div>
         <?php foreach ($projets as $p): ?>
         <div class="cv-item">
             <div class="cv-item-dates">
                 <?= $p['date_debut'] ? formatCVDate($p['date_debut']) : '' ?>
                 <?php if ($p['date_fin'] || $p['en_cours']): ?>
-                – <?= $p['en_cours'] ? 'Présent' : formatCVDate($p['date_fin']) ?>
+                – <?= $p['en_cours'] ? t('Présent') : formatCVDate($p['date_fin']) ?>
                 <?php endif; ?>
             </div>
             <div class="cv-item-content">
                 <div class="cv-item-title"><?= h($p['titre']) ?></div>
                 <?php if ($p['type']): ?>
-                <div class="cv-item-subtitle"><?= h($p['type']) ?></div>
+                <div class="cv-item-subtitle"><?= h(t($p['type'])) ?></div>
                 <?php endif; ?>
                 <?php if ($p['description']): ?>
                 <div class="cv-item-desc"><?= nl2br(h($p['description'])) ?></div>
@@ -326,7 +327,7 @@ function formatCVDate($date) {
 
     <?php if (!empty($competences)): ?>
     <div class="cv-section">
-        <div class="cv-section-title">Compétences</div>
+        <div class="cv-section-title"><?= t('Compétences') ?></div>
         <div class="competences-grid">
             <?php foreach ($competences as $comp): ?>
             <span class="competence-badge"><?= h($comp) ?></span>
@@ -336,7 +337,7 @@ function formatCVDate($date) {
     <?php endif; ?>
 
     <div class="cv-footer">
-        CV généré via ECE In – <?= SITE_NOM ?> · <?= date('d/m/Y') ?>
+        <?= t('CV généré via ECE In') ?> · <?= date('d/m/Y') ?>
     </div>
 
 </div>

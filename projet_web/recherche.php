@@ -8,7 +8,7 @@ requireConnexion();
 $pdo    = getDB();
 $userId = $_SESSION['utilisateur_id'];
 $q      = trim($_GET['q'] ?? '');
-$pageTitle = 'Recherche' . ($q ? ' : ' . $q : '');
+$pageTitle = t('Recherche') . ($q ? ' : ' . $q : '');
 
 $utilisateurs = [];
 $publications  = [];
@@ -51,14 +51,14 @@ include __DIR__ . '/includes/navbar.php';
 <?php if (empty($q)): ?>
 <div class="glass empty-state">
     <i class="bi bi-search"></i>
-    <p>Entrez au moins 2 caractères pour rechercher.</p>
+    <p><?= t('Entrez au moins 2 caractères pour rechercher.') ?></p>
 </div>
 
 <?php else: ?>
-<h5 class="fw-bold mb-4"><i class="bi bi-search me-2" style="color:var(--accent)"></i>Résultats pour «&nbsp;<?= h($q) ?>&nbsp;»</h5>
+<h5 class="fw-bold mb-4"><i class="bi bi-search me-2" style="color:var(--accent)"></i><?= t('Résultats pour « %s »', h($q)) ?></h5>
 
 <?php if (!empty($utilisateurs)): ?>
-<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem">Personnes</h6>
+<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem"><?= t('Personnes') ?></h6>
 <div class="row g-3 mb-4">
     <?php foreach ($utilisateurs as $u): ?>
     <div class="col-sm-6 col-md-4 col-lg-3">
@@ -69,7 +69,7 @@ include __DIR__ . '/includes/navbar.php';
             </a>
             <div style="font-size:.72rem;color:var(--text-3)"><?= h($u['titre'] ?? '') ?></div>
             <button class="btn btn-sm btn-outline-primary mt-2 w-100" onclick="envoyerDemande(<?= $u['id'] ?>, this)">
-                <i class="bi bi-person-plus me-1"></i>Connecter
+                <i class="bi bi-person-plus me-1"></i><?= t('Se connecter avec') ?>
             </button>
         </div>
     </div>
@@ -78,7 +78,7 @@ include __DIR__ . '/includes/navbar.php';
 <?php endif; ?>
 
 <?php if (!empty($publications)): ?>
-<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem">Publications</h6>
+<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem"><?= t('Publications') ?></h6>
 <div class="mb-4">
     <?php foreach ($publications as $post): ?>
     <div class="glass p-3 mb-2">
@@ -96,7 +96,7 @@ include __DIR__ . '/includes/navbar.php';
 <?php endif; ?>
 
 <?php if (!empty($emplois)): ?>
-<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem">Emplois & Stages</h6>
+<h6 class="fw-semibold mb-3" style="color:var(--text-3);font-size:.82rem"><?= t('Emplois & Stages') ?></h6>
 <div class="mb-4">
     <?php foreach ($emplois as $e): ?>
     <div class="glass p-3 mb-2 d-flex justify-content-between align-items-center">
@@ -104,7 +104,7 @@ include __DIR__ . '/includes/navbar.php';
             <div class="fw-semibold small"><?= h($e['titre']) ?></div>
             <div style="font-size:.72rem;color:var(--text-3)"><?= h($e['entreprise']) ?> · <?= h($e['lieu'] ?? '') ?></div>
         </div>
-        <a href="emplois.php#emploi-<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary">Voir</a>
+        <a href="emplois.php#emploi-<?= $e['id'] ?>" class="btn btn-sm btn-outline-primary"><?= t('Voir') ?></a>
     </div>
     <?php endforeach; ?>
 </div>
@@ -113,7 +113,7 @@ include __DIR__ . '/includes/navbar.php';
 <?php if (empty($utilisateurs) && empty($publications) && empty($emplois)): ?>
 <div class="glass empty-state">
     <i class="bi bi-search"></i>
-    <p>Aucun résultat pour «&nbsp;<?= h($q) ?>&nbsp;»</p>
+    <p><?= t('Aucun résultat pour « %s »', h($q)) ?></p>
 </div>
 <?php endif; ?>
 

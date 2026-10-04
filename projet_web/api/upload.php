@@ -70,7 +70,7 @@ if ($action === 'upload_avatar' && isset($_FILES['avatar'])) {
             exit();
         }
     }
-    echo json_encode(['succes' => false, 'message' => 'Erreur lors du téléversement.']);
+    echo json_encode(['succes' => false, 'message' => t('Erreur lors du téléversement.')]);
     exit();
 }
 
@@ -105,7 +105,7 @@ if ($action === 'upload_bg' && isset($_FILES['background'])) {
             exit();
         }
     }
-    echo json_encode(['succes' => false, 'message' => 'Erreur lors du téléversement.']);
+    echo json_encode(['succes' => false, 'message' => t('Erreur lors du téléversement.')]);
     exit();
 }
 
@@ -151,8 +151,8 @@ if (isset($_FILES['file']) && isset($_POST['type']) && $_POST['type'] === 'group
             exit();
         }
     }
-    echo json_encode(['succes' => false, 'message' => 'Erreur lors du téléversement de la photo.']);
+    echo json_encode(['succes' => false, 'message' => t('Erreur lors du téléversement de la photo.')]);
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

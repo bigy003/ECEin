@@ -14,7 +14,7 @@ if (estConnecte()) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= LANG ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,6 +48,15 @@ if (estConnecte()) {
     if (savedTheme && savedTheme !== 'bleu') {
         document.body.classList.add('theme-' + savedTheme);
     }
+
+    // Traductions pour le JavaScript : t('Texte en français') -> texte dans la langue choisie
+    window.LANG = '<?= LANG ?>';
+    window.I18N = <?= LANG === 'en' ? json_encode(traductions(), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS) : '{}' ?>;
+    window.t = function (texte, ...valeurs) {
+        let resultat = window.I18N[texte] || texte;
+        valeurs.forEach(v => { resultat = resultat.replace(/%[sd]/, v); });
+        return resultat;
+    };
 </script>
 
 <?php if ($jourSpecial['message']): ?>

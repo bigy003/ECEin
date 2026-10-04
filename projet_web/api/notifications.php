@@ -27,4 +27,4 @@ if ($action === 'compter') {
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

@@ -9,7 +9,7 @@ $pdo         = getDB();
 $userId      = $_SESSION['utilisateur_id'];
 $userCourant = getUtilisateurConnecte();
 $onglet      = $_GET['onglet'] ?? 'profil';
-$pageTitle   = 'Mon Profil';
+$pageTitle   = t('Mon Profil');
 
 $stmtForm = $pdo->prepare("SELECT * FROM formations WHERE utilisateur_id = ? ORDER BY date_debut DESC");
 $stmtForm->execute([$userId]);
@@ -131,8 +131,8 @@ $userCourant = getUtilisateurConnecte();
          style="background-image:url('<?= h($userCourant['image_fond']) ?>')"
          id="bg-image">
         <label class="btn btn-sm" style="cursor:pointer;background:rgba(0,0,0,.5);color:#fff;border-radius:var(--radius-sm)"
-               title="Changer la photo de fond">
-            <i class="bi bi-camera me-1"></i>Fond
+               title="<?= t('Changer la photo de fond') ?>">
+            <i class="bi bi-camera me-1"></i><?= t('Fond') ?>
             <form id="form-bg" method="POST" action="api/upload.php" enctype="multipart/form-data" class="d-none">
                 <input type="hidden" name="action" value="upload_bg">
                 <input type="file" name="background" accept="image/*" onchange="this.form.submit()">
@@ -145,7 +145,7 @@ $userCourant = getUtilisateurConnecte();
             <img src="<?= h($userCourant['photo']) ?>" alt="Avatar" class="profil-avatar" id="avatar-img">
             <label class="btn btn-sm position-absolute bottom-0 end-0"
                    style="width:28px;height:28px;padding:0;cursor:pointer;background:var(--accent);color:#000;border-radius:8px;display:flex;align-items:center;justify-content:center"
-                   title="Modifier la photo">
+                   title="<?= t('Modifier la photo') ?>">
                 <i class="bi bi-camera-fill" style="font-size:.7rem"></i>
                 <form method="POST" enctype="multipart/form-data" class="d-none">
                     <input type="hidden" name="action" value="upload_avatar">
@@ -155,7 +155,7 @@ $userCourant = getUtilisateurConnecte();
         </div>
         <div>
             <h4 class="fw-bold mb-0 text-white"><?= h($userCourant['prenom'] . ' ' . $userCourant['nom']) ?></h4>
-            <p class="mb-0" style="color:rgba(255,255,255,.7);font-size:.85rem"><?= h($userCourant['titre'] ?? 'Membre ECE In') ?></p>
+            <p class="mb-0" style="color:rgba(255,255,255,.7);font-size:.85rem"><?= h($userCourant['titre'] ?? t('Membre ECE In')) ?></p>
         </div>
     </div>
 </div>
@@ -163,22 +163,22 @@ $userCourant = getUtilisateurConnecte();
 <!-- Action buttons -->
 <div class="d-flex flex-wrap gap-2 mb-4">
     <button class="btn btn-ecein-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditProfil">
-        <i class="bi bi-pencil me-1"></i>Modifier le profil
+        <i class="bi bi-pencil me-1"></i><?= t('Modifier le profil') ?>
     </button>
     <a href="profil.php?onglet=cv" class="btn btn-outline-primary btn-sm">
-        <i class="bi bi-file-earmark-person me-1"></i>Mon CV
+        <i class="bi bi-file-earmark-person me-1"></i><?= t('Mon CV') ?>
     </a>
 </div>
 
 <!-- ===== TAB NAV (pills instead of tabs) ===== -->
 <ul class="nav nav-pills gap-1 mb-4 flex-nowrap overflow-auto pb-1">
-    <li class="nav-item"><a class="nav-link <?= $onglet === 'profil' ? 'active' : '' ?>" href="?onglet=profil"><i class="bi bi-person me-1"></i>Profil</a></li>
+    <li class="nav-item"><a class="nav-link <?= $onglet === 'profil' ? 'active' : '' ?>" href="?onglet=profil"><i class="bi bi-person me-1"></i><?= t('Profil') ?></a></li>
     <li class="nav-item"><a class="nav-link <?= $onglet === 'publications' ? 'active' : '' ?>" href="?onglet=publications"><i class="bi bi-grid me-1"></i>Posts</a></li>
-    <li class="nav-item"><a class="nav-link <?= $onglet === 'formations' ? 'active' : '' ?>" href="?onglet=formations"><i class="bi bi-mortarboard me-1"></i>Formations</a></li>
-    <li class="nav-item"><a class="nav-link <?= $onglet === 'projets' ? 'active' : '' ?>" href="?onglet=projets"><i class="bi bi-kanban me-1"></i>Projets</a></li>
+    <li class="nav-item"><a class="nav-link <?= $onglet === 'formations' ? 'active' : '' ?>" href="?onglet=formations"><i class="bi bi-mortarboard me-1"></i><?= t('Formations') ?></a></li>
+    <li class="nav-item"><a class="nav-link <?= $onglet === 'projets' ? 'active' : '' ?>" href="?onglet=projets"><i class="bi bi-kanban me-1"></i><?= t('Projets') ?></a></li>
     <li class="nav-item"><a class="nav-link <?= $onglet === 'albums' ? 'active' : '' ?>" href="?onglet=albums"><i class="bi bi-images me-1"></i>Albums</a></li>
     <li class="nav-item"><a class="nav-link <?= $onglet === 'cv' ? 'active' : '' ?>" href="?onglet=cv"><i class="bi bi-file-earmark-pdf me-1"></i>CV</a></li>
-    <li class="nav-item"><a class="nav-link <?= $onglet === 'parametres' ? 'active' : '' ?>" href="?onglet=parametres"><i class="bi bi-gear me-1"></i>Paramètres</a></li>
+    <li class="nav-item"><a class="nav-link <?= $onglet === 'parametres' ? 'active' : '' ?>" href="?onglet=parametres"><i class="bi bi-gear me-1"></i><?= t('Paramètres') ?></a></li>
 </ul>
 
 <!-- ===== CONTENU ONGLETS ===== -->
@@ -187,7 +187,7 @@ $userCourant = getUtilisateurConnecte();
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="glass p-4 mb-3">
-            <h6 class="fw-bold mb-3" style="font-size:.85rem">Informations</h6>
+            <h6 class="fw-bold mb-3" style="font-size:.85rem"><?= t('Informations') ?></h6>
             <?php if ($userCourant['biographie']): ?>
             <p class="small" style="color:var(--text-2)"><?= nl2br(h($userCourant['biographie'])) ?></p>
             <hr style="border-color:var(--glass-border)">
@@ -205,18 +205,18 @@ $userCourant = getUtilisateurConnecte();
                 <li class="mb-2"><i class="bi bi-telephone me-2" style="color:var(--accent)"></i><?= h($userCourant['telephone']) ?></li>
                 <?php endif; ?>
                 <li class="mb-2"><i class="bi bi-envelope me-2" style="color:var(--accent)"></i><?= h($userCourant['email']) ?></li>
-                <li><i class="bi bi-calendar me-2" style="color:var(--accent)"></i>Membre depuis <?= formatDateFr($userCourant['date_inscription']) ?></li>
+                <li><i class="bi bi-calendar me-2" style="color:var(--accent)"></i><?= t('Membre depuis') ?> <?= formatDateFr($userCourant['date_inscription']) ?></li>
             </ul>
         </div>
     </div>
     <div class="col-lg-8">
         <div class="glass p-4 mb-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i>Formations</h6>
-                <a href="?onglet=formations" class="btn btn-sm btn-light">Tout voir</a>
+                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i><?= t('Formations') ?></h6>
+                <a href="?onglet=formations" class="btn btn-sm btn-light"><?= t('Tout voir') ?></a>
             </div>
             <?php if (empty($formations)): ?>
-            <p class="small" style="color:var(--text-3)">Aucune formation renseignée.</p>
+            <p class="small" style="color:var(--text-3)"><?= t('Aucune formation renseignée.') ?></p>
             <?php else: ?>
             <?php foreach (array_slice($formations, 0, 2) as $f): ?>
             <div class="d-flex gap-3 mb-3">
@@ -228,7 +228,7 @@ $userCourant = getUtilisateurConnecte();
                     <div style="font-size:.78rem;color:var(--text-3)"><?= h($f['etablissement']) ?></div>
                     <div style="font-size:.72rem;color:var(--text-3)">
                         <?= formatDateFr($f['date_debut']) ?> –
-                        <?= $f['en_cours'] ? 'Présent' : ($f['date_fin'] ? formatDateFr($f['date_fin']) : '') ?>
+                        <?= $f['en_cours'] ? t('Présent') : ($f['date_fin'] ? formatDateFr($f['date_fin']) : '') ?>
                     </div>
                 </div>
             </div>
@@ -238,21 +238,21 @@ $userCourant = getUtilisateurConnecte();
 
         <div class="glass p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-kanban me-2" style="color:var(--teal)"></i>Projets</h6>
-                <a href="?onglet=projets" class="btn btn-sm btn-light">Tout voir</a>
+                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-kanban me-2" style="color:var(--teal)"></i><?= t('Projets') ?></h6>
+                <a href="?onglet=projets" class="btn btn-sm btn-light"><?= t('Tout voir') ?></a>
             </div>
             <?php if (empty($projets)): ?>
-            <p class="small" style="color:var(--text-3)">Aucun projet renseigné.</p>
+            <p class="small" style="color:var(--text-3)"><?= t('Aucun projet renseigné.') ?></p>
             <?php else: ?>
             <?php foreach (array_slice($projets, 0, 2) as $p): ?>
             <div class="mb-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="fw-semibold small"><?= h($p['titre']) ?></div>
-                    <?php if ($p['en_cours']): ?><span class="badge bg-success" style="font-size:.6rem">En cours</span><?php endif; ?>
+                    <?php if ($p['en_cours']): ?><span class="badge bg-success" style="font-size:.6rem"><?= t('En cours') ?></span><?php endif; ?>
                 </div>
                 <p class="small mb-0" style="color:var(--text-3)"><?= h(substr($p['description'] ?? '', 0, 150)) ?></p>
                 <?php if ($p['lien']): ?>
-                <a href="<?= h($p['lien']) ?>" target="_blank" class="small"><i class="bi bi-box-arrow-up-right me-1"></i>Voir</a>
+                <a href="<?= h($p['lien']) ?>" target="_blank" class="small"><i class="bi bi-box-arrow-up-right me-1"></i><?= t('Voir') ?></a>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
@@ -264,15 +264,15 @@ $userCourant = getUtilisateurConnecte();
 <?php elseif ($onglet === 'formations'): ?>
 <div class="glass p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="fw-bold mb-0"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i>Mes Formations</h6>
+        <h6 class="fw-bold mb-0"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i><?= t('Mes Formations') ?></h6>
         <button class="btn btn-sm btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalFormation">
-            <i class="bi bi-plus-lg me-1"></i>Ajouter
+            <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter') ?>
         </button>
     </div>
     <?php if (empty($formations)): ?>
     <div class="empty-state">
         <i class="bi bi-mortarboard"></i>
-        <p>Aucune formation renseignée. Ajoutez votre parcours académique !</p>
+        <p><?= t('Aucune formation renseignée. Ajoutez votre parcours académique !') ?></p>
     </div>
     <?php else: ?>
     <div class="timeline">
@@ -289,11 +289,11 @@ $userCourant = getUtilisateurConnecte();
                         <?php endif; ?>
                         <div style="font-size:.72rem;color:var(--text-3)">
                             <?= formatDateFr($f['date_debut']) ?> –
-                            <?= $f['en_cours'] ? '<span class="badge bg-success" style="font-size:.6rem">Présent</span>' : ($f['date_fin'] ? formatDateFr($f['date_fin']) : '') ?>
+                            <?= $f['en_cours'] ? '<span class="badge bg-success" style="font-size:.6rem">' . t('Présent') . '</span>' : ($f['date_fin'] ? formatDateFr($f['date_fin']) : '') ?>
                             <?php if ($f['lieu']): ?> · <?= h($f['lieu']) ?><?php endif; ?>
                         </div>
                     </div>
-                    <button class="btn btn-sm btn-light" onclick="supprimerFormation(<?= $f['id'] ?>, this)" title="Supprimer">
+                    <button class="btn btn-sm btn-light" onclick="supprimerFormation(<?= $f['id'] ?>, this)" title="<?= t('Supprimer') ?>">
                         <i class="bi bi-trash" style="color:var(--rose)"></i>
                     </button>
                 </div>
@@ -311,28 +311,28 @@ $userCourant = getUtilisateurConnecte();
 <div class="modal fade" id="modalFormation" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Ajouter une formation</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Ajouter une formation') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form method="POST">
                 <input type="hidden" name="action" value="ajouter_formation">
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label fw-semibold">Établissement *</label><input type="text" name="etablissement" class="form-control" required placeholder="ECE Paris..."></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Diplôme *</label><input type="text" name="diplome" class="form-control" required placeholder="Master, Licence..."></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Domaine</label><input type="text" name="domaine" class="form-control" placeholder="Informatique..."></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Lieu</label><input type="text" name="lieu" class="form-control" placeholder="Paris..."></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Établissement *') ?></label><input type="text" name="etablissement" class="form-control" required placeholder="ECE Paris..."></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Diplôme *') ?></label><input type="text" name="diplome" class="form-control" required placeholder="<?= t('Master, Licence...') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Domaine') ?></label><input type="text" name="domaine" class="form-control" placeholder="<?= t('Informatique...') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Lieu') ?></label><input type="text" name="lieu" class="form-control" placeholder="Paris..."></div>
                     <div class="row g-2 mb-3">
-                        <div class="col-6"><label class="form-label fw-semibold">Date début *</label><input type="date" name="date_debut" class="form-control" required></div>
-                        <div class="col-6"><label class="form-label fw-semibold">Date fin</label><input type="date" name="date_fin" class="form-control" id="date_fin_form"></div>
+                        <div class="col-6"><label class="form-label fw-semibold"><?= t('Date début *') ?></label><input type="date" name="date_debut" class="form-control" required></div>
+                        <div class="col-6"><label class="form-label fw-semibold"><?= t('Date fin') ?></label><input type="date" name="date_fin" class="form-control" id="date_fin_form"></div>
                     </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" name="en_cours" id="en_cours"
                                onchange="document.getElementById('date_fin_form').disabled = this.checked">
-                        <label class="form-check-label" for="en_cours">Formation en cours</label>
+                        <label class="form-check-label" for="en_cours"><?= t('Formation en cours') ?></label>
                     </div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea name="description" class="form-control" rows="3" placeholder="Spécialités..."></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Description') ?></label><textarea name="description" class="form-control" rows="3" placeholder="<?= t('Spécialités...') ?>"></textarea></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-ecein-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="submit" class="btn btn-ecein-primary"><?= t('Enregistrer') ?></button>
                 </div>
             </form>
         </div>
@@ -342,15 +342,15 @@ $userCourant = getUtilisateurConnecte();
 <?php elseif ($onglet === 'projets'): ?>
 <div class="glass p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="fw-bold mb-0"><i class="bi bi-kanban me-2" style="color:var(--teal)"></i>Mes Projets</h6>
+        <h6 class="fw-bold mb-0"><i class="bi bi-kanban me-2" style="color:var(--teal)"></i><?= t('Mes Projets') ?></h6>
         <button class="btn btn-sm btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalProjet">
-            <i class="bi bi-plus-lg me-1"></i>Ajouter
+            <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter') ?>
         </button>
     </div>
     <?php if (empty($projets)): ?>
     <div class="empty-state">
         <i class="bi bi-kanban"></i>
-        <p>Aucun projet renseigné. Ajoutez vos réalisations !</p>
+        <p><?= t('Aucun projet renseigné. Ajoutez vos réalisations !') ?></p>
     </div>
     <?php else: ?>
     <div class="row g-3">
@@ -360,10 +360,10 @@ $userCourant = getUtilisateurConnecte();
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
                         <h6 class="fw-bold mb-0 small"><?= h($p['titre']) ?></h6>
-                        <?php if ($p['en_cours']): ?><span class="badge bg-success" style="font-size:.6rem">En cours</span><?php endif; ?>
+                        <?php if ($p['en_cours']): ?><span class="badge bg-success" style="font-size:.6rem"><?= t('En cours') ?></span><?php endif; ?>
                     </div>
                     <?php if ($p['type']): ?>
-                    <span class="badge bg-secondary mb-2" style="font-size:.6rem"><?= h($p['type']) ?></span>
+                    <span class="badge bg-secondary mb-2" style="font-size:.6rem"><?= h(t($p['type'])) ?></span>
                     <?php endif; ?>
                     <p class="small" style="color:var(--text-3)"><?= nl2br(h($p['description'] ?? '')) ?></p>
                     <?php if ($p['date_debut']): ?>
@@ -374,7 +374,7 @@ $userCourant = getUtilisateurConnecte();
                     <?php endif; ?>
                     <?php if ($p['lien']): ?>
                     <a href="<?= h($p['lien']) ?>" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
-                        <i class="bi bi-box-arrow-up-right me-1"></i>Voir
+                        <i class="bi bi-box-arrow-up-right me-1"></i><?= t('Voir') ?>
                     </a>
                     <?php endif; ?>
                 </div>
@@ -394,32 +394,32 @@ $userCourant = getUtilisateurConnecte();
 <div class="modal fade" id="modalProjet" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Ajouter un projet</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Ajouter un projet') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form method="POST">
                 <input type="hidden" name="action" value="ajouter_projet">
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label fw-semibold">Titre *</label><input type="text" name="titre" class="form-control" required placeholder="Nom du projet"></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Type</label>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Titre *') ?></label><input type="text" name="titre" class="form-control" required placeholder="<?= t('Nom du projet') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Type') ?></label>
                         <select name="type_projet" class="form-select">
-                            <option value="">Sélectionner...</option>
-                            <option value="Projet académique">Projet académique</option>
-                            <option value="Projet Erasmus">Projet Erasmus</option>
-                            <option value="Projet entreprise">Projet entreprise</option>
-                            <option value="Projet personnel">Projet personnel</option>
-                            <option value="Association étudiante">Association étudiante</option>
+                            <option value=""><?= t('Sélectionner...') ?></option>
+                            <option value="Projet académique"><?= t('Projet académique') ?></option>
+                            <option value="Projet Erasmus"><?= t('Projet Erasmus') ?></option>
+                            <option value="Projet entreprise"><?= t('Projet entreprise') ?></option>
+                            <option value="Projet personnel"><?= t('Projet personnel') ?></option>
+                            <option value="Association étudiante"><?= t('Association étudiante') ?></option>
                         </select>
                     </div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Description') ?></label><textarea name="description" class="form-control" rows="3"></textarea></div>
                     <div class="row g-2 mb-3">
-                        <div class="col-6"><label class="form-label fw-semibold">Date début</label><input type="date" name="date_debut" class="form-control"></div>
-                        <div class="col-6"><label class="form-label fw-semibold">Date fin</label><input type="date" name="date_fin" class="form-control"></div>
+                        <div class="col-6"><label class="form-label fw-semibold"><?= t('Date début') ?></label><input type="date" name="date_debut" class="form-control"></div>
+                        <div class="col-6"><label class="form-label fw-semibold"><?= t('Date fin') ?></label><input type="date" name="date_fin" class="form-control"></div>
                     </div>
-                    <div class="form-check mb-3"><input type="checkbox" class="form-check-input" name="en_cours" id="proj_en_cours"><label class="form-check-label" for="proj_en_cours">Projet en cours</label></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Lien</label><input type="url" name="lien" class="form-control" placeholder="https://..."></div>
+                    <div class="form-check mb-3"><input type="checkbox" class="form-check-input" name="en_cours" id="proj_en_cours"><label class="form-check-label" for="proj_en_cours"><?= t('Projet en cours') ?></label></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Lien') ?></label><input type="url" name="lien" class="form-control" placeholder="https://..."></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-ecein-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="submit" class="btn btn-ecein-primary"><?= t('Enregistrer') ?></button>
                 </div>
             </form>
         </div>
@@ -441,32 +441,32 @@ $competences = $stmtCompetences->fetchAll();
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="glass p-4">
-            <h6 class="fw-bold mb-3" style="font-size:.85rem"><i class="bi bi-file-earmark-person me-2" style="color:var(--accent)"></i>Générer mon CV</h6>
-            <p class="small" style="color:var(--text-3)">CV généré automatiquement à partir de vos données de profil.</p>
+            <h6 class="fw-bold mb-3" style="font-size:.85rem"><i class="bi bi-file-earmark-person me-2" style="color:var(--accent)"></i><?= t('Générer mon CV') ?></h6>
+            <p class="small" style="color:var(--text-3)"><?= t('CV généré automatiquement à partir de vos données de profil.') ?></p>
             <div class="d-grid gap-2">
-                <a href="cv/generer_cv.php?format=html" target="_blank" class="btn btn-ecein-primary"><i class="bi bi-file-earmark-code me-2"></i>CV en HTML</a>
-                <a href="cv/generer_cv.php?format=pdf" target="_blank" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf me-2"></i>CV en PDF</a>
-                <a href="cv/generer_cv.php?format=xml" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-code me-2"></i>Exporter XML</a>
+                <a href="cv/generer_cv.php?format=html" target="_blank" class="btn btn-ecein-primary"><i class="bi bi-file-earmark-code me-2"></i><?= t('CV en HTML') ?></a>
+                <a href="cv/generer_cv.php?format=pdf" target="_blank" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf me-2"></i><?= t('CV en PDF') ?></a>
+                <a href="cv/generer_cv.php?format=xml" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-code me-2"></i><?= t('Exporter XML') ?></a>
             </div>
             <hr style="border-color:var(--glass-border)">
-            <h6 class="fw-bold mb-2" style="font-size:.82rem">Importer depuis XML</h6>
+            <h6 class="fw-bold mb-2" style="font-size:.82rem"><?= t('Importer depuis XML') ?></h6>
             <form method="POST" action="api/import_cv.php" enctype="multipart/form-data">
                 <div class="mb-2"><input type="file" name="cv_xml" class="form-control form-control-sm" accept=".xml"></div>
-                <button type="submit" class="btn btn-sm btn-outline-primary w-100"><i class="bi bi-upload me-1"></i>Importer</button>
+                <button type="submit" class="btn btn-sm btn-outline-primary w-100"><i class="bi bi-upload me-1"></i><?= t('Importer') ?></button>
             </form>
         </div>
         
         <!-- Gestion des compétences -->
         <div class="glass p-4 mt-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-star me-2" style="color:var(--accent)"></i>Mes Compétences</h6>
+                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-star me-2" style="color:var(--accent)"></i><?= t('Mes Compétences') ?></h6>
                 <button class="btn btn-sm btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalCompetence">
-                    <i class="bi bi-plus-lg me-1"></i>Ajouter
+                    <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter') ?>
                 </button>
             </div>
             <div id="liste-competences">
                 <?php if (empty($competences)): ?>
-                <p class="small text-muted text-center mb-0">Aucune compétence. Ajoutez-en une !</p>
+                <p class="small text-muted text-center mb-0"><?= t('Aucune compétence. Ajoutez-en une !') ?></p>
                 <?php else: ?>
                 <div class="d-flex flex-column gap-2">
                     <?php foreach ($competences as $comp): ?>
@@ -475,20 +475,20 @@ $competences = $stmtCompetences->fetchAll();
                             <span class="fw-semibold" style="font-size:.9rem"><?= h($comp['nom']) ?></span>
                             <span class="badge bg-ecein-primary" style="font-size:.7rem">
                                 <?php
-                                $niveaux = ['debutant' => 'Débutant', 'intermediaire' => 'Intermédiaire', 'avance' => 'Avancé', 'expert' => 'Expert'];
-                                echo $niveaux[$comp['niveau']] ?? 'Intermédiaire';
+                                $niveaux = ['debutant' => t('Débutant'), 'intermediaire' => t('Intermédiaire'), 'avance' => t('Avancé'), 'expert' => t('Expert')];
+                                echo $niveaux[$comp['niveau']] ?? t('Intermédiaire');
                                 ?>
                             </span>
                         </div>
                         <div class="d-flex gap-2">
                             <button class="btn btn-sm btn-light" 
                                     onclick="ouvrirModalModifierCompetence(<?= $comp['id'] ?>, '<?= h(addslashes($comp['nom'])) ?>', '<?= $comp['niveau'] ?>')"
-                                    title="Modifier">
+                                    title="<?= t('Modifier') ?>">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-light" 
                                     onclick="supprimerCompetence(<?= $comp['id'] ?>)"
-                                    title="Supprimer"
+                                    title="<?= t('Supprimer') ?>"
                                     style="color:var(--rose)">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -503,11 +503,11 @@ $competences = $stmtCompetences->fetchAll();
     <div class="col-lg-8">
         <div class="glass p-0 overflow-hidden">
             <div class="p-3" style="border-bottom:1px solid var(--glass-border)">
-                <span class="fw-bold" style="font-size:.85rem"><i class="bi bi-eye me-2" style="color:var(--accent)"></i>Aperçu du CV</span>
+                <span class="fw-bold" style="font-size:.85rem"><i class="bi bi-eye me-2" style="color:var(--accent)"></i><?= t('Aperçu du CV') ?></span>
             </div>
             <div id="cv-apercu">
                 <iframe src="cv/generer_cv.php?format=html&preview=1"
-                        class="w-100 border-0" style="height:600px;background:var(--bg)" title="Aperçu CV"></iframe>
+                        class="w-100 border-0" style="height:600px;background:var(--bg)" title="<?= t('Aperçu du CV') ?>"></iframe>
             </div>
         </div>
     </div>
@@ -518,7 +518,7 @@ $competences = $stmtCompetences->fetchAll();
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="modalCompetenceTitle">Ajouter une compétence</h5>
+                <h5 class="modal-title fw-bold" id="modalCompetenceTitle"><?= t('Ajouter une compétence') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formCompetence" method="POST">
@@ -526,22 +526,22 @@ $competences = $stmtCompetences->fetchAll();
                 <input type="hidden" name="competence_id" id="competence-id" value="">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Nom de la compétence *</label>
-                        <input type="text" name="nom" id="competence-nom" class="form-control" required placeholder="Ex: PHP, JavaScript, MySQL...">
+                        <label class="form-label fw-semibold"><?= t('Nom de la compétence *') ?></label>
+                        <input type="text" name="nom" id="competence-nom" class="form-control" required placeholder="<?= t('Ex: PHP, JavaScript, MySQL...') ?>">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Niveau</label>
+                        <label class="form-label fw-semibold"><?= t('Niveau') ?></label>
                         <select name="niveau" id="competence-niveau" class="form-select">
-                            <option value="debutant">Débutant</option>
-                            <option value="intermediaire" selected>Intermédiaire</option>
-                            <option value="avance">Avancé</option>
-                            <option value="expert">Expert</option>
+                            <option value="debutant"><?= t('Débutant') ?></option>
+                            <option value="intermediaire" selected><?= t('Intermédiaire') ?></option>
+                            <option value="avance"><?= t('Avancé') ?></option>
+                            <option value="expert"><?= t('Expert') ?></option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-ecein-primary" id="btn-submit-competence" onclick="soumettreFormulaireCompetence()">Ajouter</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="button" class="btn btn-ecein-primary" id="btn-submit-competence" onclick="soumettreFormulaireCompetence()"><?= t('Ajouter') ?></button>
                 </div>
             </form>
         </div>
@@ -558,11 +558,11 @@ function soumettreFormulaireCompetence() {
     // Validation côté client
     const nom = $('#competence-nom').val().trim();
     if (!nom) {
-        afficherToast('Le nom de la compétence est requis.', 'warning');
+        afficherToast(t('Le nom de la compétence est requis.'), 'warning');
         return;
     }
     
-    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Enregistrement...');
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>' + t('Enregistrement...'));
     
     $.post('api/competences.php', formData, function(res) {
         if (res.succes) {
@@ -579,7 +579,7 @@ function soumettreFormulaireCompetence() {
         }
     }).fail(function(xhr, status, error) {
         console.error('Erreur AJAX:', {status, error, xhr});
-        afficherToast('Erreur lors de l\'enregistrement.', 'danger');
+        afficherToast(t('Erreur lors de l\'enregistrement.'), 'danger');
         $btn.prop('disabled', false).html($btnOriginal);
     });
     
@@ -596,18 +596,18 @@ $(document).ready(function() {
 });
 
 function ouvrirModalModifierCompetence(competenceId, nom, niveau) {
-    document.getElementById('modalCompetenceTitle').innerText = 'Modifier la compétence';
+    document.getElementById('modalCompetenceTitle').innerText = t('Modifier la compétence');
     document.getElementById('competence-action').value = 'modifier';
     document.getElementById('competence-id').value = competenceId;
     document.getElementById('competence-nom').value = nom;
     document.getElementById('competence-niveau').value = niveau;
-    document.getElementById('btn-submit-competence').innerText = 'Enregistrer';
+    document.getElementById('btn-submit-competence').innerText = t('Enregistrer');
     const modal = new bootstrap.Modal(document.getElementById('modalCompetence'));
     modal.show();
 }
 
 function supprimerCompetence(competenceId) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette compétence ?')) {
+    if (confirm(t('Êtes-vous sûr de vouloir supprimer cette compétence ?'))) {
         const $competence = $('#competence-' + competenceId);
         $competence.fadeOut(300, function() {
             $.post('api/competences.php', {
@@ -625,7 +625,7 @@ function supprimerCompetence(competenceId) {
                     $competence.fadeIn(300); // Réafficher si erreur
                 }
             }).fail(function() {
-                afficherToast('Erreur lors de la suppression.', 'danger');
+                afficherToast(t('Erreur lors de la suppression.'), 'danger');
                 $competence.fadeIn(300); // Réafficher si erreur
             });
         });
@@ -634,26 +634,26 @@ function supprimerCompetence(competenceId) {
 
 // Réinitialiser le modal quand il se ferme
 $('#modalCompetence').on('hidden.bs.modal', function() {
-    document.getElementById('modalCompetenceTitle').innerText = 'Ajouter une compétence';
+    document.getElementById('modalCompetenceTitle').innerText = t('Ajouter une compétence');
     document.getElementById('competence-action').value = 'ajouter';
     document.getElementById('competence-id').value = '';
     document.getElementById('competence-nom').value = '';
     document.getElementById('competence-niveau').value = 'intermediaire';
-    document.getElementById('btn-submit-competence').innerText = 'Ajouter';
+    document.getElementById('btn-submit-competence').innerText = t('Ajouter');
 });
 </script>
 
 <?php elseif ($onglet === 'albums'): ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h6 class="fw-bold mb-0">Mes Albums Photos</h6>
+    <h6 class="fw-bold mb-0"><?= t('Mes Albums Photos') ?></h6>
     <button class="btn btn-sm btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalAlbum">
-        <i class="bi bi-plus-lg me-1"></i>Créer un album
+        <i class="bi bi-plus-lg me-1"></i><?= t('Créer un album') ?>
     </button>
 </div>
 <?php if (empty($albums)): ?>
 <div class="glass empty-state">
     <i class="bi bi-images"></i>
-    <p>Aucun album photo. Créez votre premier album !</p>
+    <p><?= t('Aucun album photo. Créez votre premier album !') ?></p>
 </div>
 <?php else: ?>
 <div class="row g-3">
@@ -668,7 +668,7 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
                     </div>
                     <?php endif; ?>
                     <div class="position-absolute top-0 end-0 m-2">
-                        <span class="badge bg-ecein-primary"><?= $album['nb_photos'] ?? 0 ?> photo<?= ($album['nb_photos'] ?? 0) > 1 ? 's' : '' ?></span>
+                        <span class="badge bg-ecein-primary"><?= $album['nb_photos'] ?? 0 ?> <?= ($album['nb_photos'] ?? 0) > 1 ? t('photos') : t('photo') ?></span>
                     </div>
                 </div>
                 <div class="p-3">
@@ -679,12 +679,12 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
             </a>
             <div class="p-2 d-flex gap-1" style="border-top:1px solid var(--glass-border)">
                 <button class="btn btn-sm btn-outline-primary flex-fill" onclick="ouvrirModalAjouterPhoto(<?= $album['id'] ?>)">
-                    <i class="bi bi-plus"></i> Ajouter
+                    <i class="bi bi-plus"></i> <?= t('Ajouter') ?>
                 </button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="ouvrirModalModifierAlbum(<?= $album['id'] ?>, '<?= h(addslashes($album['nom'])) ?>', '<?= h(addslashes($album['description'] ?? '')) ?>')" title="Modifier">
+                <button class="btn btn-sm btn-outline-secondary" onclick="ouvrirModalModifierAlbum(<?= $album['id'] ?>, '<?= h(addslashes($album['nom'])) ?>', '<?= h(addslashes($album['description'] ?? '')) ?>')" title="<?= t('Modifier') ?>">
                     <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="supprimerAlbum(<?= $album['id'] ?>)" title="Supprimer">
+                <button class="btn btn-sm btn-outline-danger" onclick="supprimerAlbum(<?= $album['id'] ?>)" title="<?= t('Supprimer') ?>">
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
@@ -700,7 +700,7 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
     <div class="col-12">
         <div class="glass empty-state">
             <i class="bi bi-chat-square-dots"></i>
-            <p>Aucune publication pour l'instant.</p>
+            <p><?= t('Aucune publication pour l\'instant.') ?></p>
         </div>
     </div>
     <?php else: ?>
@@ -714,18 +714,18 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
 
 <?php elseif ($onglet === 'parametres'): ?>
 <div class="glass p-4">
-    <h6 class="fw-bold mb-3"><i class="bi bi-gear me-2" style="color:var(--accent)"></i>Paramètres du compte</h6>
+    <h6 class="fw-bold mb-3"><i class="bi bi-gear me-2" style="color:var(--accent)"></i><?= t('Paramètres du compte') ?></h6>
     <form method="POST" id="formParametres">
         <input type="hidden" name="action" value="update_profil">
         <div class="row g-3">
-            <div class="col-md-12"><label class="form-label fw-semibold">Titre professionnel</label><input type="text" name="titre" class="form-control" value="<?= h($userCourant['titre'] ?? '') ?>" placeholder="Étudiant ING2 · Développeur Full-Stack"></div>
-            <div class="col-md-12"><label class="form-label fw-semibold">Biographie</label><textarea name="biographie" class="form-control" rows="4"><?= h($userCourant['biographie'] ?? '') ?></textarea></div>
-            <div class="col-md-6"><label class="form-label fw-semibold">Localisation</label><input type="text" name="localisation" class="form-control" value="<?= h($userCourant['localisation'] ?? '') ?>" placeholder="Paris, France"></div>
-            <div class="col-md-6"><label class="form-label fw-semibold">Téléphone</label><input type="tel" name="telephone" class="form-control" value="<?= h($userCourant['telephone'] ?? '') ?>"></div>
-            <div class="col-md-12"><label class="form-label fw-semibold">Site web / Portfolio</label><input type="url" name="site_web" class="form-control" value="<?= h($userCourant['site_web'] ?? '') ?>" placeholder="https://monportfolio.fr"></div>
+            <div class="col-md-12"><label class="form-label fw-semibold"><?= t('Titre professionnel') ?></label><input type="text" name="titre" class="form-control" value="<?= h($userCourant['titre'] ?? '') ?>" placeholder="<?= t('Étudiant ING2 · Développeur Full-Stack') ?>"></div>
+            <div class="col-md-12"><label class="form-label fw-semibold"><?= t('Biographie') ?></label><textarea name="biographie" class="form-control" rows="4"><?= h($userCourant['biographie'] ?? '') ?></textarea></div>
+            <div class="col-md-6"><label class="form-label fw-semibold"><?= t('Localisation') ?></label><input type="text" name="localisation" class="form-control" value="<?= h($userCourant['localisation'] ?? '') ?>" placeholder="Paris, France"></div>
+            <div class="col-md-6"><label class="form-label fw-semibold"><?= t('Téléphone') ?></label><input type="tel" name="telephone" class="form-control" value="<?= h($userCourant['telephone'] ?? '') ?>"></div>
+            <div class="col-md-12"><label class="form-label fw-semibold"><?= t('Site web / Portfolio') ?></label><input type="url" name="site_web" class="form-control" value="<?= h($userCourant['site_web'] ?? '') ?>" placeholder="https://monportfolio.fr"></div>
         </div>
         <div class="mt-3">
-            <button type="submit" class="btn btn-ecein-primary"><i class="bi bi-save me-2"></i>Enregistrer les modifications</button>
+            <button type="submit" class="btn btn-ecein-primary"><i class="bi bi-save me-2"></i><?= t('Enregistrer les modifications') ?></button>
         </div>
     </form>
 </div>
@@ -735,18 +735,18 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
 <div class="modal fade" id="modalEditProfil" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Modifier le profil</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Modifier le profil') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form method="POST">
                 <input type="hidden" name="action" value="update_profil">
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label fw-semibold">Titre professionnel</label><input type="text" name="titre" class="form-control" value="<?= h($userCourant['titre'] ?? '') ?>"></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Biographie</label><textarea name="biographie" class="form-control" rows="3"><?= h($userCourant['biographie'] ?? '') ?></textarea></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Localisation</label><input type="text" name="localisation" class="form-control" value="<?= h($userCourant['localisation'] ?? '') ?>"></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Site web</label><input type="url" name="site_web" class="form-control" value="<?= h($userCourant['site_web'] ?? '') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Titre professionnel') ?></label><input type="text" name="titre" class="form-control" value="<?= h($userCourant['titre'] ?? '') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Biographie') ?></label><textarea name="biographie" class="form-control" rows="3"><?= h($userCourant['biographie'] ?? '') ?></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Localisation') ?></label><input type="text" name="localisation" class="form-control" value="<?= h($userCourant['localisation'] ?? '') ?>"></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Site web') ?></label><input type="url" name="site_web" class="form-control" value="<?= h($userCourant['site_web'] ?? '') ?>"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-ecein-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="submit" class="btn btn-ecein-primary"><?= t('Enregistrer') ?></button>
                 </div>
             </form>
         </div>
@@ -757,16 +757,16 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
 <div class="modal fade" id="modalAlbum" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Créer un album</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Créer un album') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form method="POST" action="api/albums.php">
                 <input type="hidden" name="action" value="creer_album">
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label fw-semibold">Nom de l'album *</label><input type="text" name="nom" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Nom de l\'album *') ?></label><input type="text" name="nom" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Description') ?></label><textarea name="description" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-ecein-primary">Créer</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="submit" class="btn btn-ecein-primary"><?= t('Créer') ?></button>
                 </div>
             </form>
         </div>
@@ -777,17 +777,17 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
 <div class="modal fade" id="modalModifierAlbum" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Modifier l'album</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Modifier l\'album') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <form method="POST" action="api/albums.php">
                 <input type="hidden" name="action" value="modifier_album">
                 <input type="hidden" name="album_id" id="modifier-album-id" value="">
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label fw-semibold">Nom de l'album *</label><input type="text" name="nom" id="modifier-album-nom" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label fw-semibold">Description</label><textarea name="description" id="modifier-album-description" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Nom de l\'album *') ?></label><input type="text" name="nom" id="modifier-album-nom" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label fw-semibold"><?= t('Description') ?></label><textarea name="description" id="modifier-album-description" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-ecein-primary">Enregistrer</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                    <button type="submit" class="btn btn-ecein-primary"><?= t('Enregistrer') ?></button>
                 </div>
             </form>
         </div>
@@ -799,7 +799,7 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Ajouter des photos à l'album</h5>
+                <h5 class="modal-title fw-bold"><?= t('Ajouter des photos à l\'album') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -807,9 +807,9 @@ $('#modalCompetence').on('hidden.bs.modal', function() {
                 <div id="liste-photos-disponibles" class="row g-2"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
                 <button type="button" class="btn btn-ecein-primary" id="btn-ajouter-photos" onclick="ajouterPhotosSelectionnees()" style="display:none">
-                    <i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">0</span> photo(s)
+                    <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter') ?> <span id="nb-photos-selectionnees">0</span> <?= t('photo(s)') ?>
                 </button>
             </div>
         </div>
@@ -832,7 +832,7 @@ function ouvrirModalAjouterPhoto(albumId) {
             });
             container.innerHTML = html;
         } else {
-            container.innerHTML = '<div class="col-12 text-center py-4"><i class="bi bi-images fs-1" style="color:var(--text-3);opacity:.25"></i><p class="mt-2">Aucune photo disponible à ajouter.</p><p class="small text-muted">Publiez d\'abord des photos depuis la page d\'accueil.</p></div>';
+            container.innerHTML = '<div class="col-12 text-center py-4"><i class="bi bi-images fs-1" style="color:var(--text-3);opacity:.25"></i><p class="mt-2">' + t('Aucune photo disponible à ajouter.') + '</p><p class="small text-muted">' + t('Publiez d\'abord des photos depuis la page d\'accueil.') + '</p></div>';
         }
     });
     
@@ -875,7 +875,7 @@ function ajouterPhotosSelectionnees() {
     if (!albumId) return;
     
     const $btn = $('#btn-ajouter-photos');
-    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Ajout en cours...');
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>' + t('Ajout en cours...'));
     
     let ajoutes = 0;
     let erreurs = 0;
@@ -890,22 +890,22 @@ function ajouterPhotosSelectionnees() {
             ajoutes++;
             if (ajoutes + erreurs === total) {
                 if (ajoutes > 0) {
-                    afficherToast(ajoutes + ' photo(s) ajoutée(s) à l\'album.', 'success');
+                    afficherToast(t("%d photo(s) ajoutée(s) à l'album.", ajoutes), 'success');
                     setTimeout(() => location.reload(), 500);
                 } else {
-                    afficherToast('Aucune photo n\'a pu être ajoutée.', 'danger');
-                    $btn.prop('disabled', false).html('<i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">' + total + '</span> photo(s)');
+                    afficherToast(t('Aucune photo n\'a pu être ajoutée.'), 'danger');
+                    $btn.prop('disabled', false).html('<i class="bi bi-plus-lg me-1"></i>' + t('Ajouter') + ' <span id="nb-photos-selectionnees">' + total + '</span> ' + t('photo(s)'));
                 }
             }
         }).fail(function() {
             erreurs++;
             if (ajoutes + erreurs === total) {
                 if (ajoutes > 0) {
-                    afficherToast(ajoutes + ' photo(s) ajoutée(s), ' + erreurs + ' erreur(s).', 'warning');
+                    afficherToast(t('%d photo(s) ajoutée(s), %d erreur(s).', ajoutes, erreurs), 'warning');
                     setTimeout(() => location.reload(), 500);
                 } else {
-                    afficherToast('Erreur lors de l\'ajout des photos.', 'danger');
-                    $btn.prop('disabled', false).html('<i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">' + total + '</span> photo(s)');
+                    afficherToast(t('Erreur lors de l\'ajout des photos.'), 'danger');
+                    $btn.prop('disabled', false).html('<i class="bi bi-plus-lg me-1"></i>' + t('Ajouter') + ' <span id="nb-photos-selectionnees">' + total + '</span> ' + t('photo(s)'));
                 }
             }
         });
@@ -921,7 +921,7 @@ function ouvrirModalModifierAlbum(albumId, nom, description) {
 }
 
 function supprimerAlbum(albumId) {
-    if (!confirm('Supprimer cet album ? Toutes les photos seront retirées de l\'album (mais pas supprimées).')) return;
+    if (!confirm(t('Supprimer cet album ? Toutes les photos seront retirées de l\'album (mais pas supprimées).'))) return;
     
     const form = document.createElement('form');
     form.method = 'POST';

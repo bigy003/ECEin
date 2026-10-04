@@ -11,7 +11,7 @@ $pdo    = getDB();
 $userId = $_SESSION['utilisateur_id'];
 $userCourant = getUtilisateurConnecte();
 $emploiId = (int) ($_GET['id'] ?? 0);
-$pageTitle = 'Candidater';
+$pageTitle = t('Candidater');
 
 if (!$emploiId) {
     redirect('emplois.php');
@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $cv = $_FILES['cv'] ?? null;
     
     if (empty($message)) {
-        $erreur = 'Veuillez rédiger un message de motivation.';
+        $erreur = t('Veuillez rédiger un message de motivation.');
     } elseif ($candidatureExistante) {
-        $erreur = 'Vous avez déjà candidaté à cette offre.';
+        $erreur = t('Vous avez déjà candidaté à cette offre.');
     } else {
         // Gérer l'upload du CV si fourni
         $cvPath = null;
@@ -80,12 +80,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 VALUES (?, ?, ?, ?, NOW())
             ")->execute([$userId, $emploiId, $message, $cvPath]);
             
-            $succes = 'Votre candidature a été envoyée avec succès !';
+            $succes = t('Votre candidature a été envoyée avec succès !');
             
             // Redirection après 2 secondes
             header("refresh:2;url=emplois.php");
         } catch (PDOException $e) {
-            $erreur = 'Erreur lors de l\'envoi de la candidature. Veuillez réessayer.';
+            $erreur = t('Erreur lors de l\'envoi de la candidature. Veuillez réessayer.');
         }
     }
 }
@@ -101,14 +101,14 @@ include __DIR__ . '/includes/navbar.php';
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h5 class="fw-bold mb-1">
-                        <i class="bi bi-send me-2" style="color:var(--accent)"></i>Candidater
+                        <i class="bi bi-send me-2" style="color:var(--accent)"></i><?= t('Candidater') ?>
                     </h5>
                     <p class="mb-0 small" style="color:var(--text-3)">
-                        Postuler à cette offre
+                        <?= t('Postuler à cette offre') ?>
                     </p>
                 </div>
                 <a href="emplois.php" class="btn btn-sm btn-light">
-                    <i class="bi bi-arrow-left me-1"></i>Retour
+                    <i class="bi bi-arrow-left me-1"></i><?= t('Retour') ?>
                 </a>
             </div>
 
@@ -129,7 +129,7 @@ include __DIR__ . '/includes/navbar.php';
 
             <?php if ($candidatureExistante && !$succes): ?>
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="bi bi-info-circle me-2"></i>Vous avez déjà candidaté à cette offre.
+                <i class="bi bi-info-circle me-2"></i><?= t('Vous avez déjà candidaté à cette offre.') ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <?php endif; ?>
@@ -162,7 +162,7 @@ include __DIR__ . '/includes/navbar.php';
                             $badgeClass = $badgeColors[$emploi['type']] ?? 'bg-secondary';
                             ?>
                             <span class="badge <?= $badgeClass ?>" style="font-size:.7rem">
-                                <?= h(ucfirst($emploi['type'])) ?>
+                                <?= h(libelleTypeEmploi($emploi['type'])) ?>
                             </span>
                         </div>
                     </div>
@@ -174,7 +174,7 @@ include __DIR__ . '/includes/navbar.php';
             <div class="glass p-4">
                 <h6 class="fw-bold mb-3">
                     <i class="bi bi-file-earmark-text me-2" style="color:var(--accent)"></i>
-                    Formulaire de candidature
+                    <?= t('Formulaire de candidature') ?>
                 </h6>
 
                 <form method="POST" enctype="multipart/form-data">
@@ -182,7 +182,7 @@ include __DIR__ . '/includes/navbar.php';
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold">
-                            Votre profil
+                            <?= t('Votre profil') ?>
                         </label>
                         <div class="d-flex gap-3 align-items-center p-3 rounded-3" style="background:var(--bg-3)">
                             <img src="<?= h($userCourant['photo']) ?>" alt="" 
@@ -200,32 +200,32 @@ include __DIR__ . '/includes/navbar.php';
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">
-                            Message de motivation *
+                            <?= t('Message de motivation *') ?>
                         </label>
                         <textarea name="message" class="form-control" rows="8" required 
-                                  placeholder="Rédigez votre message de motivation. Présentez-vous, expliquez pourquoi vous êtes intéressé(e) par cette offre et ce que vous pouvez apporter..."><?= h($_POST['message'] ?? '') ?></textarea>
+                                  placeholder="<?= t('Rédigez votre message de motivation. Présentez-vous, expliquez pourquoi vous êtes intéressé(e) par cette offre et ce que vous pouvez apporter...') ?>"><?= h($_POST['message'] ?? '') ?></textarea>
                         <div class="form-text">
-                            Minimum 100 caractères recommandé
+                            <?= t('Minimum 100 caractères recommandé') ?>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">
-                            CV / Lettre de motivation (optionnel)
+                            <?= t('CV / Lettre de motivation (optionnel)') ?>
                         </label>
                         <input type="file" name="cv" class="form-control" 
                                accept=".pdf,.doc,.docx">
                         <div class="form-text">
-                            Formats acceptés : PDF, DOC, DOCX (max 5 MB)
+                            <?= t('Formats acceptés : PDF, DOC, DOCX (max 5 MB)') ?>
                         </div>
                     </div>
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-ecein-primary">
-                            <i class="bi bi-send me-2"></i>Envoyer ma candidature
+                            <i class="bi bi-send me-2"></i><?= t('Envoyer ma candidature') ?>
                         </button>
                         <a href="emplois.php" class="btn btn-light">
-                            Annuler
+                            <?= t('Annuler') ?>
                         </a>
                     </div>
                 </form>

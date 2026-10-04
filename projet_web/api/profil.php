@@ -18,7 +18,7 @@ if ($action === 'supprimer_formation') {
     $stmt->execute([$id]);
     $f = $stmt->fetch();
     if (!$f || $f['utilisateur_id'] != $userId) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
     $pdo->prepare("DELETE FROM formations WHERE id = ?")->execute([$id]);
@@ -33,7 +33,7 @@ if ($action === 'supprimer_projet') {
     $stmt->execute([$id]);
     $p = $stmt->fetch();
     if (!$p || $p['utilisateur_id'] != $userId) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
     $pdo->prepare("DELETE FROM projets WHERE id = ?")->execute([$id]);
@@ -41,4 +41,4 @@ if ($action === 'supprimer_projet') {
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

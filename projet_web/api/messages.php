@@ -60,7 +60,7 @@ if ($action === 'envoyer') {
 
     // Validation : le message doit avoir du contenu OU un fichier joint
     if (empty($contenu) && !$fichierJoint) {
-        echo json_encode(['succes' => false, 'message' => 'Message et fichier vides.']);
+        echo json_encode(['succes' => false, 'message' => t('Message et fichier vides.')]);
         exit();
     }
 
@@ -71,7 +71,7 @@ if ($action === 'envoyer') {
     ");
     $stmtCheck->execute([$convId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
 
@@ -108,7 +108,7 @@ if ($action === 'envoyer') {
     $message = $stmt->fetch();
 
     if (!$message) {
-        echo json_encode(['succes' => false, 'message' => 'Erreur lors de la récupération du message.']);
+        echo json_encode(['succes' => false, 'message' => t('Erreur lors de la récupération du message.')]);
         exit();
     }
 
@@ -163,7 +163,7 @@ if ($action === 'supprimer') {
     $msg = $stmt->fetch();
     
     if (!$msg) {
-        echo json_encode(['succes' => false, 'message' => 'Message introuvable ou non autorisé.']);
+        echo json_encode(['succes' => false, 'message' => t('Message introuvable ou non autorisé.')]);
         exit();
     }
     
@@ -179,7 +179,7 @@ if ($action === 'supprimer') {
             ->execute([$msgId]);
     }
         
-    echo json_encode(['succes' => true, 'message' => 'Message supprimé.']);
+    echo json_encode(['succes' => true, 'message' => t('Message supprimé.')]);
     exit();
 }
 
@@ -212,19 +212,19 @@ if ($action === 'modifier') {
     $msg = $stmt->fetch();
     
     if (!$msg || !empty($msg['est_supprime'])) {
-        echo json_encode(['succes' => false, 'message' => 'Message introuvable ou déjà supprimé.']);
+        echo json_encode(['succes' => false, 'message' => t('Message introuvable ou déjà supprimé.')]);
         exit();
     }
     
     // Calculer le temps écoulé depuis l'envoi du message (en secondes)
     $timeSinceSent = time() - strtotime($msg['date_envoi']);
     if ($timeSinceSent > 30) {
-        echo json_encode(['succes' => false, 'message' => 'Le délai de 30 secondes pour modifier ce message est écoulé.']);
+        echo json_encode(['succes' => false, 'message' => t('Le délai de 30 secondes pour modifier ce message est écoulé.')]);
         exit();
     }
     
     if (empty($nouveauContenu) && empty($msg['fichier_joint'])) {
-         echo json_encode(['succes' => false, 'message' => 'Le message ne peut pas être vide.']);
+         echo json_encode(['succes' => false, 'message' => t('Le message ne peut pas être vide.')]);
          exit();
     }
     
@@ -289,7 +289,7 @@ if ($action === 'marquer_lu') {
     $msgId = (int) ($_POST['message_id'] ?? 0);
     
     if (!$msgId) {
-        echo json_encode(['succes' => false, 'message' => 'ID de message manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID de message manquant.')]);
         exit();
     }
     
@@ -304,7 +304,7 @@ if ($action === 'marquer_lu') {
     $msg = $stmt->fetch();
     
     if (!$msg) {
-        echo json_encode(['succes' => false, 'message' => 'Message introuvable ou accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Message introuvable ou accès refusé.')]);
         exit();
     }
     
@@ -327,7 +327,7 @@ if ($action === 'marquer_tous_lus') {
     $convId = (int) ($_POST['conversation_id'] ?? 0);
     
     if (!$convId) {
-        echo json_encode(['succes' => false, 'message' => 'ID de conversation manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID de conversation manquant.')]);
         exit();
     }
     
@@ -337,7 +337,7 @@ if ($action === 'marquer_tous_lus') {
     ");
     $stmtCheck->execute([$convId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Accès refusé.']);
+        echo json_encode(['succes' => false, 'message' => t('Accès refusé.')]);
         exit();
     }
     
@@ -353,4 +353,4 @@ if ($action === 'marquer_tous_lus') {
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

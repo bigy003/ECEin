@@ -84,7 +84,7 @@ if ($action === 'ajouter_photo') {
     $publicationId = (int) ($_POST['publication_id'] ?? 0);
 
     if (!$albumId || !$publicationId) {
-        echo json_encode(['succes' => false, 'message' => 'Paramètres manquants.']);
+        echo json_encode(['succes' => false, 'message' => t('Paramètres manquants.')]);
         exit();
     }
 
@@ -92,7 +92,7 @@ if ($action === 'ajouter_photo') {
     $stmt = $pdo->prepare("SELECT id FROM albums WHERE id = ? AND utilisateur_id = ?");
     $stmt->execute([$albumId, $userId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Album introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Album introuvable.')]);
         exit();
     }
 
@@ -102,13 +102,13 @@ if ($action === 'ajouter_photo') {
     $publication = $stmt->fetch();
     
     if (!$publication) {
-        echo json_encode(['succes' => false, 'message' => 'Publication introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Publication introuvable.')]);
         exit();
     }
 
     // Vérifier que c'est une publication avec une photo
     if ($publication['type'] !== 'photo' || empty($publication['fichier'])) {
-        echo json_encode(['succes' => false, 'message' => 'Cette publication ne contient pas de photo.']);
+        echo json_encode(['succes' => false, 'message' => t('Cette publication ne contient pas de photo.')]);
         exit();
     }
 
@@ -116,7 +116,7 @@ if ($action === 'ajouter_photo') {
     $stmt = $pdo->prepare("SELECT * FROM album_photos WHERE album_id = ? AND publication_id = ?");
     $stmt->execute([$albumId, $publicationId]);
     if ($stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Cette photo est déjà dans l\'album.']);
+        echo json_encode(['succes' => false, 'message' => t('Cette photo est déjà dans l\'album.')]);
         exit();
     }
 
@@ -133,7 +133,7 @@ if ($action === 'ajouter_photo') {
             ->execute([$publication['fichier'], $albumId]);
     }
 
-    echo json_encode(['succes' => true, 'message' => 'Photo ajoutée à l\'album.']);
+    echo json_encode(['succes' => true, 'message' => t('Photo ajoutée à l\'album.')]);
     exit();
 }
 
@@ -145,7 +145,7 @@ if ($action === 'retirer_photo') {
     $publicationId = (int) ($_POST['publication_id'] ?? 0);
 
     if (!$albumId || !$publicationId) {
-        echo json_encode(['succes' => false, 'message' => 'Paramètres manquants.']);
+        echo json_encode(['succes' => false, 'message' => t('Paramètres manquants.')]);
         exit();
     }
 
@@ -153,7 +153,7 @@ if ($action === 'retirer_photo') {
     $stmt = $pdo->prepare("SELECT id FROM albums WHERE id = ? AND utilisateur_id = ?");
     $stmt->execute([$albumId, $userId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Album introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Album introuvable.')]);
         exit();
     }
 
@@ -176,7 +176,7 @@ if ($action === 'retirer_photo') {
             ->execute([$nouvelleCouverture ?: null, $albumId]);
     }
 
-    echo json_encode(['succes' => true, 'message' => 'Photo retirée de l\'album.']);
+    echo json_encode(['succes' => true, 'message' => t('Photo retirée de l\'album.')]);
     exit();
 }
 
@@ -188,7 +188,7 @@ if ($action === 'definir_couverture') {
     $publicationId = (int) ($_POST['publication_id'] ?? 0);
 
     if (!$albumId || !$publicationId) {
-        echo json_encode(['succes' => false, 'message' => 'Paramètres manquants.']);
+        echo json_encode(['succes' => false, 'message' => t('Paramètres manquants.')]);
         exit();
     }
 
@@ -196,7 +196,7 @@ if ($action === 'definir_couverture') {
     $stmt = $pdo->prepare("SELECT id FROM albums WHERE id = ? AND utilisateur_id = ?");
     $stmt->execute([$albumId, $userId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Album introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Album introuvable.')]);
         exit();
     }
 
@@ -208,7 +208,7 @@ if ($action === 'definir_couverture') {
     $photo = $stmt->fetch();
     
     if (!$photo) {
-        echo json_encode(['succes' => false, 'message' => 'Photo introuvable dans l\'album.']);
+        echo json_encode(['succes' => false, 'message' => t('Photo introuvable dans l\'album.')]);
         exit();
     }
 
@@ -216,7 +216,7 @@ if ($action === 'definir_couverture') {
     $pdo->prepare("UPDATE albums SET couverture = ? WHERE id = ?")
         ->execute([$photo['fichier'], $albumId]);
 
-    echo json_encode(['succes' => true, 'message' => 'Couverture mise à jour.']);
+    echo json_encode(['succes' => true, 'message' => t('Couverture mise à jour.')]);
     exit();
 }
 
@@ -227,7 +227,7 @@ if ($action === 'photos_disponibles') {
     $albumId = (int) ($_GET['album_id'] ?? 0);
     
     if (!$albumId) {
-        echo json_encode(['succes' => false, 'message' => 'Album introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Album introuvable.')]);
         exit();
     }
     
@@ -235,7 +235,7 @@ if ($action === 'photos_disponibles') {
     $stmt = $pdo->prepare("SELECT id FROM albums WHERE id = ? AND utilisateur_id = ?");
     $stmt->execute([$albumId, $userId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Album introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Album introuvable.')]);
         exit();
     }
     

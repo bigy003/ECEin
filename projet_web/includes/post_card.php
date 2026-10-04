@@ -24,7 +24,7 @@ if (!isset($post)) return;
                         <?= h($post['prenom'] . ' ' . $post['nom']) ?>
                     </a>
                     <?php if ($post['humeur']): ?>
-                    <span style="color:var(--text-3);font-size:.8rem"> – se sent <em><?= h($post['humeur']) ?></em></span>
+                    <span style="color:var(--text-3);font-size:.8rem"> <?= t('se sent') ?> <em><?= h($post['humeur']) ?></em></span>
                     <?php endif; ?>
                     <div class="d-flex align-items-center gap-2" style="font-size:.72rem;color:var(--text-3)">
                         <span><?= tempsEcoule($post['date_publication']) ?></span>
@@ -46,8 +46,8 @@ if (!isset($post)) return;
                     <i class="bi bi-three-dots"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><button class="dropdown-item" onclick="modifierPost(<?= $post['id'] ?>)"><i class="bi bi-pencil me-2"></i>Modifier</button></li>
-                    <li><button class="dropdown-item" style="color:var(--rose)" onclick="supprimerPost(<?= $post['id'] ?>)"><i class="bi bi-trash me-2"></i>Supprimer</button></li>
+                    <li><button class="dropdown-item" onclick="modifierPost(<?= $post['id'] ?>)"><i class="bi bi-pencil me-2"></i><?= t('Modifier') ?></button></li>
+                    <li><button class="dropdown-item" style="color:var(--rose)" onclick="supprimerPost(<?= $post['id'] ?>)"><i class="bi bi-trash me-2"></i><?= t('Supprimer') ?></button></li>
                 </ul>
             </div>
             <?php endif; ?>
@@ -61,7 +61,7 @@ if (!isset($post)) return;
         <!-- Partage -->
         <?php if ($post['type'] === 'partage' && $post['original_contenu']): ?>
         <div class="rounded-3 p-3 mb-3" style="background:var(--bg-3);border:1px solid var(--glass-border)">
-            <small style="color:var(--text-3)">Partagé de <?= h($post['original_prenom'] . ' ' . $post['original_nom']) ?></small>
+            <small style="color:var(--text-3)"><?= t('Partagé de') ?> <?= h($post['original_prenom'] . ' ' . $post['original_nom']) ?></small>
             <p class="mb-0 mt-1 small"><?= nl2br(h(substr($post['original_contenu'], 0, 200))) ?>...</p>
         </div>
         <?php endif; ?>
@@ -89,7 +89,7 @@ if (!isset($post)) return;
                 <div>
                     <div class="fw-semibold">Curriculum Vitæ</div>
                     <a href="<?= h($post['fichier']) ?>" target="_blank" class="btn btn-sm btn-outline-danger mt-1">
-                        <i class="bi bi-download me-1"></i>Télécharger
+                        <i class="bi bi-download me-1"></i><?= t('Télécharger') ?>
                     </a>
                 </div>
             </div>
@@ -101,12 +101,12 @@ if (!isset($post)) return;
         <?php if ($post['nb_reactions'] > 0 || $post['nb_commentaires'] > 0): ?>
         <div class="d-flex justify-content-between small mb-2 pb-2" style="border-bottom:1px solid var(--glass-border);color:var(--text-3)">
             <?php if ($post['nb_reactions'] > 0): ?>
-            <span>👍 <?= $post['nb_reactions'] ?> réaction<?= $post['nb_reactions'] > 1 ? 's' : '' ?></span>
+            <span>👍 <?= $post['nb_reactions'] ?> <?= $post['nb_reactions'] > 1 ? t('réactions') : t('réaction') ?></span>
             <?php else: ?><span></span><?php endif; ?>
             <?php if ($post['nb_commentaires'] > 0): ?>
             <button class="btn btn-link btn-sm p-0 text-decoration-none" style="color:var(--text-3)"
                     onclick="afficherCommentaires(<?= $post['id'] ?>)">
-                <?= $post['nb_commentaires'] ?> commentaire<?= $post['nb_commentaires'] > 1 ? 's' : '' ?>
+                <?= $post['nb_commentaires'] ?> <?= $post['nb_commentaires'] > 1 ? t('commentaires') : t('commentaire') ?>
             </button>
             <?php endif; ?>
         </div>
@@ -117,15 +117,15 @@ if (!isset($post)) return;
             <button class="btn btn-sm btn-light flex-fill reaction-btn <?= $post['ma_reaction'] ? 'active' : '' ?>"
                     onclick="reagir(<?= $post['id'] ?>, 'jaime', this)">
                 <i class="bi bi-hand-thumbs-up<?= $post['ma_reaction'] === 'jaime' ? '-fill' : '' ?>"></i>
-                <span class="d-none d-sm-inline ms-1">J'aime</span>
+                <span class="d-none d-sm-inline ms-1"><?= t('J\'aime') ?></span>
             </button>
             <button class="btn btn-sm btn-light flex-fill" onclick="afficherCommentaires(<?= $post['id'] ?>)">
                 <i class="bi bi-chat"></i>
-                <span class="d-none d-sm-inline ms-1">Commenter</span>
+                <span class="d-none d-sm-inline ms-1"><?= t('Commenter') ?></span>
             </button>
             <button class="btn btn-sm btn-light flex-fill" onclick="partager(<?= $post['id'] ?>)">
                 <i class="bi bi-share"></i>
-                <span class="d-none d-sm-inline ms-1">Partager</span>
+                <span class="d-none d-sm-inline ms-1"><?= t('Partager') ?></span>
             </button>
         </div>
 
@@ -133,11 +133,11 @@ if (!isset($post)) return;
         <div class="commentaires-section mt-3" id="commentaires-<?= $post['id'] ?>" style="display:none">
             <div class="commentaires-liste" id="liste-commentaires-<?= $post['id'] ?>"></div>
             <div class="d-flex gap-2 mt-2">
-                <img src="<?= h($userCourant['photo'] ?? 'assets/images/default_avatar.jpeg') ?>" alt=""
+                <img src="<?= h($userCourant['photo'] ?? 'assets/images/default_avatar.svg') ?>" alt=""
                      class="rounded-3" width="30" height="30" style="object-fit:cover">
                 <div class="flex-grow-1 position-relative">
                     <input type="text" class="form-control form-control-sm"
-                           placeholder="Écrire un commentaire..."
+                           placeholder="<?= t('Écrire un commentaire...') ?>"
                            style="border-radius:var(--radius-sm);padding-right:2.5rem"
                            id="input-commentaire-<?= $post['id'] ?>"
                            onkeypress="if(event.key==='Enter') envoyerCommentaire(<?= $post['id'] ?>)">

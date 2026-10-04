@@ -42,7 +42,7 @@ if ($action === 'initier') {
     $estGroupe  = isset($_POST['est_groupe']) && $_POST['est_groupe'] == '1';
 
     if (!$convId) {
-        echo json_encode(['succes' => false, 'message' => 'ID de conversation manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID de conversation manquant.')]);
         exit;
     }
 
@@ -51,7 +51,7 @@ if ($action === 'initier') {
     $stmtCheck = $pdo->prepare("SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND utilisateur_id = ?");
     $stmtCheck->execute([$convId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Vous ne faites pas partie de cette conversation.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous ne faites pas partie de cette conversation.')]);
         exit;
     }
 
@@ -104,7 +104,7 @@ if ($action === 'initier') {
          * L'appelant et le receveur sont stockés dans les colonnes appelant_id et receveur_id.
          */
         if (!$receveurId) {
-            echo json_encode(['succes' => false, 'message' => 'ID du destinataire manquant.']);
+            echo json_encode(['succes' => false, 'message' => t('ID du destinataire manquant.')]);
             exit;
         }
         
@@ -224,7 +224,7 @@ if ($action === 'ajouter_participant') {
     $nouveauParticipantId = (int) ($_POST['participant_id'] ?? 0);
     
     if (!$appelId || !$nouveauParticipantId) {
-        echo json_encode(['succes' => false, 'message' => 'Paramètres manquants.']);
+        echo json_encode(['succes' => false, 'message' => t('Paramètres manquants.')]);
         exit;
     }
     
@@ -236,7 +236,7 @@ if ($action === 'ajouter_participant') {
     ");
     $stmtCheck->execute([$appelId, $userId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Vous ne faites pas partie de cet appel.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous ne faites pas partie de cet appel.')]);
         exit;
     }
     
@@ -246,7 +246,7 @@ if ($action === 'ajouter_participant') {
     $appel = $stmtAppel->fetch();
     
     if (!$appel) {
-        echo json_encode(['succes' => false, 'message' => 'Appel introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Appel introuvable.')]);
         exit;
     }
     
@@ -259,7 +259,7 @@ if ($action === 'ajouter_participant') {
     ");
     $stmtCheckAmi->execute([$userId, $nouveauParticipantId, $nouveauParticipantId, $userId]);
     if (!$stmtCheckAmi->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Vous devez être connecté avec cette personne pour l\'ajouter à l\'appel.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous devez être connecté avec cette personne pour l\'ajouter à l\'appel.')]);
         exit;
     }
     
@@ -279,7 +279,7 @@ if ($action === 'ajouter_participant') {
     
     // Si c'est un groupe, le participant doit être dans la conversation
     if ($conversation && $conversation['est_groupe'] && !$estDansConversation) {
-        echo json_encode(['succes' => false, 'message' => 'Cette personne ne fait pas partie du groupe.']);
+        echo json_encode(['succes' => false, 'message' => t('Cette personne ne fait pas partie du groupe.')]);
         exit;
     }
     
@@ -292,7 +292,7 @@ if ($action === 'ajouter_participant') {
     ");
     $stmtCheck2->execute([$appel['conversation_id'], $userId, $nouveauParticipantId, $nouveauParticipantId, $userId]);
     if ($stmtCheck2->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Cette personne est déjà dans l\'appel.']);
+        echo json_encode(['succes' => false, 'message' => t('Cette personne est déjà dans l\'appel.')]);
         exit;
     }
     
@@ -301,7 +301,7 @@ if ($action === 'ajouter_participant') {
         $stmtCheck3 = $pdo->prepare("SELECT 1 FROM appel_participants WHERE appel_id = ? AND utilisateur_id = ?");
         $stmtCheck3->execute([$appelId, $nouveauParticipantId]);
         if ($stmtCheck3->fetchColumn()) {
-            echo json_encode(['succes' => false, 'message' => 'Cette personne est déjà dans l\'appel.']);
+            echo json_encode(['succes' => false, 'message' => t('Cette personne est déjà dans l\'appel.')]);
             exit;
         }
     } catch (PDOException $e) {
@@ -321,7 +321,7 @@ if ($action === 'ajouter_participant') {
         
         echo json_encode([
             'succes' => true, 
-            'message' => 'Invitation envoyée.',
+            'message' => t('Invitation envoyée.'),
             'participant' => $participant
         ]);
     } else {
@@ -344,7 +344,7 @@ if ($action === 'ajouter_participant') {
             
             echo json_encode([
                 'succes' => true, 
-                'message' => 'Invitation envoyée.',
+                'message' => t('Invitation envoyée.'),
                 'participant' => $participant
             ]);
         } catch (PDOException $e) {
@@ -358,7 +358,7 @@ if ($action === 'ajouter_participant') {
             
             echo json_encode([
                 'succes' => true, 
-                'message' => 'Invitation envoyée.',
+                'message' => t('Invitation envoyée.'),
                 'participant' => $participant
             ]);
         }
@@ -558,4 +558,4 @@ if ($action === 'participants') {
     exit;
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

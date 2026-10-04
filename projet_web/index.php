@@ -20,7 +20,7 @@ requireConnexion(); // Vérifie que l'utilisateur est connecté
 $pdo         = getDB(); // Connexion à la base de données
 $userId      = $_SESSION['utilisateur_id']; // ID de l'utilisateur connecté
 $userCourant = getUtilisateurConnecte(); // Récupère les infos complètes de l'utilisateur
-$pageTitle   = 'Accueil'; // Titre de la page
+$pageTitle   = t('Accueil'); // Titre de la page
 $pageScript  = 'posts.js'; // Script JavaScript à charger (gestion des publications)
 
 // ===================== RÉCUPÉRER LES PUBLICATIONS =====================
@@ -130,11 +130,11 @@ include __DIR__ . '/includes/navbar.php';
 <!-- Greeting + quick stats -->
 <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
     <div>
-        <h4 class="fw-bold mb-1">Bonjour, <?= h($userCourant['prenom']) ?></h4>
-        <p class="mb-0" style="color:var(--text-3);font-size:.85rem">Voici ce qu'il se passe dans votre réseau aujourd'hui.</p>
+        <h4 class="fw-bold mb-1"><?= t('Bonjour') ?>, <?= h($userCourant['prenom']) ?></h4>
+        <p class="mb-0" style="color:var(--text-3);font-size:.85rem"><?= t('Voici ce qu\'il se passe dans votre réseau aujourd\'hui.') ?></p>
     </div>
     <button class="btn btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalPublier">
-        <i class="bi bi-plus-lg me-1"></i>Publier
+        <i class="bi bi-plus-lg me-1"></i><?= t('Publier') ?>
     </button>
 </div>
 
@@ -146,11 +146,11 @@ include __DIR__ . '/includes/navbar.php';
             <div class="p-3 pb-2 d-flex align-items-center justify-content-between" style="border-bottom:1px solid var(--glass-border)">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-calendar-event" style="color:var(--accent)"></i>
-                    <span class="fw-semibold" style="font-size:.85rem">Événements à venir</span>
+                    <span class="fw-semibold" style="font-size:.85rem"><?= t('Événements à venir') ?></span>
                 </div>
                 <?php if (estAdmin()): ?>
                 <button class="btn btn-sm btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalPublierEvenement">
-                    <i class="bi bi-plus-lg me-1"></i>Publier
+                    <i class="bi bi-plus-lg me-1"></i><?= t('Publier') ?>
                 </button>
                 <?php endif; ?>
             </div>
@@ -168,15 +168,15 @@ include __DIR__ . '/includes/navbar.php';
                                 </div>
                                 <div class="flex-grow-1">
                                     <?php if ($evt['est_officiel']): ?>
-                                    <span class="badge bg-ecein mb-1" style="font-size:.65rem">Officiel ECE</span>
+                                    <span class="badge bg-ecein mb-1" style="font-size:.65rem"><?= t('Officiel ECE') ?></span>
                                     <?php endif; ?>
                                     <h6 class="fw-bold mb-1"><?= h($evt['titre']) ?></h6>
                                     <p class="mb-1 small" style="color:var(--text-3)">
-                                        <i class="bi bi-geo-alt me-1"></i><?= h($evt['lieu'] ?? 'Lieu non précisé') ?>
+                                        <i class="bi bi-geo-alt me-1"></i><?= h($evt['lieu'] ?? t('Lieu non précisé')) ?>
                                     </p>
                                     <p class="small mb-0" style="color:var(--text-2)"><?= h(substr($evt['description'] ?? '', 0, 120)) ?>...</p>
                                     <p class="small mt-2 mb-0" style="color:var(--accent)">
-                                        <i class="bi bi-arrow-right me-1"></i>Cliquer pour voir plus
+                                        <i class="bi bi-arrow-right me-1"></i><?= t('Cliquer pour voir plus') ?>
                                     </p>
                                 </div>
                             </div>
@@ -202,7 +202,7 @@ include __DIR__ . '/includes/navbar.php';
         <div class="glass p-0 h-100">
             <div class="p-3 pb-2 d-flex align-items-center gap-2" style="border-bottom:1px solid var(--glass-border)">
                 <i class="bi bi-person-plus" style="color:var(--teal)"></i>
-                <span class="fw-semibold" style="font-size:.85rem">Personnes à connaître</span>
+                <span class="fw-semibold" style="font-size:.85rem"><?= t('Personnes à connaître') ?></span>
             </div>
             <div class="p-3 pt-2">
                 <?php foreach ($suggestions as $sugg): ?>
@@ -215,7 +215,7 @@ include __DIR__ . '/includes/navbar.php';
                         <a href="utilisateur.php?id=<?= $sugg['id'] ?>" class="text-decoration-none" style="color:var(--text)">
                             <div class="fw-semibold small text-truncate"><?= h($sugg['prenom'] . ' ' . $sugg['nom']) ?></div>
                         </a>
-                        <div style="font-size:.72rem;color:var(--text-3)"><?= h(substr($sugg['titre'] ?? 'Membre ECE', 0, 35)) ?></div>
+                        <div style="font-size:.72rem;color:var(--text-3)"><?= h(substr($sugg['titre'] ?? t('Membre ECE'), 0, 35)) ?></div>
                     </div>
                     <button class="btn btn-sm btn-outline-primary rounded-pill px-2"
                             onclick="envoyerDemande(<?= $sugg['id'] ?>, this)">
@@ -236,7 +236,7 @@ include __DIR__ . '/includes/navbar.php';
              class="rounded-3" width="44" height="44" style="object-fit:cover;border:2px solid var(--accent)">
         <button class="btn btn-light flex-grow-1 text-start px-4" style="border-radius:var(--radius)"
                 data-bs-toggle="modal" data-bs-target="#modalPublier">
-            <span style="color:var(--text-3)">Quoi de neuf, <?= h($userCourant['prenom']) ?> ?</span>
+            <span style="color:var(--text-3)"><?= t('Quoi de neuf, %s ?', h($userCourant['prenom'])) ?></span>
         </button>
     </div>
     <div class="d-flex justify-content-around mt-3 pt-2" style="border-top:1px solid var(--glass-border)">
@@ -248,12 +248,12 @@ include __DIR__ . '/includes/navbar.php';
         <button class="btn btn-sm btn-light d-flex align-items-center gap-2"
                 data-bs-toggle="modal" data-bs-target="#modalPublier" data-type="video">
             <i class="bi bi-camera-video" style="color:var(--rose)"></i>
-            <span class="d-none d-sm-inline small">Vidéo</span>
+            <span class="d-none d-sm-inline small"><?= t('Vidéo') ?></span>
         </button>
         <button class="btn btn-sm btn-light d-flex align-items-center gap-2"
                 data-bs-toggle="modal" data-bs-target="#modalPublier" data-type="evenement">
             <i class="bi bi-calendar-plus" style="color:var(--accent)"></i>
-            <span class="d-none d-sm-inline small">Événement</span>
+            <span class="d-none d-sm-inline small"><?= t('Événement') ?></span>
         </button>
         <button class="btn btn-sm btn-light d-flex align-items-center gap-2"
                 data-bs-toggle="modal" data-bs-target="#modalPublier" data-type="cv">
@@ -270,7 +270,7 @@ include __DIR__ . '/includes/navbar.php';
             <?php if (empty($publications)): ?>
             <div class="glass empty-state">
                 <i class="bi bi-chat-square-dots"></i>
-                <p>Aucune publication pour l'instant. Commencez à partager !</p>
+                <p><?= t('Aucune publication pour l\'instant. Commencez à partager !') ?></p>
             </div>
             <?php endif; ?>
 
@@ -285,7 +285,7 @@ include __DIR__ . '/includes/navbar.php';
         <div class="glass p-0" style="position:sticky;top:70px">
             <div class="p-3 pb-2 d-flex align-items-center gap-2" style="border-bottom:1px solid var(--glass-border)">
                 <i class="bi bi-briefcase" style="color:var(--accent)"></i>
-                <span class="fw-semibold" style="font-size:.85rem">Offres récentes</span>
+                <span class="fw-semibold" style="font-size:.85rem"><?= t('Offres récentes') ?></span>
             </div>
             <div class="p-3 pt-2">
                 <?php
@@ -298,13 +298,13 @@ include __DIR__ . '/includes/navbar.php';
                      onclick="afficherDetailsEmploi(JSON.parse(this.getAttribute('data-emploi')))">
                     <div class="fw-semibold small" style="color:var(--text)"><?= h($emploi['titre']) ?></div>
                     <div style="font-size:.72rem;color:var(--text-3)"><?= h($emploi['entreprise']) ?></div>
-                    <span class="badge bg-secondary mt-1" style="font-size:.6rem"><?= h(ucfirst($emploi['type'])) ?></span>
+                    <span class="badge bg-secondary mt-1" style="font-size:.6rem"><?= h(libelleTypeEmploi($emploi['type'])) ?></span>
                     <div style="font-size:.7rem;color:var(--accent);margin-top:4px">
-                        <i class="bi bi-arrow-right me-1"></i>Cliquer pour voir plus
+                        <i class="bi bi-arrow-right me-1"></i><?= t('Cliquer pour voir plus') ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
-                <a href="emplois.php" class="btn btn-sm btn-light w-100 mt-2">Toutes les offres <i class="bi bi-arrow-right ms-1"></i></a>
+                <a href="emplois.php" class="btn btn-sm btn-light w-100 mt-2"><?= t('Toutes les offres') ?> <i class="bi bi-arrow-right ms-1"></i></a>
             </div>
         </div>
     </div>
@@ -315,7 +315,7 @@ include __DIR__ . '/includes/navbar.php';
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Créer une publication</h5>
+                <h5 class="modal-title fw-bold"><?= t('Créer une publication') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formPublier" enctype="multipart/form-data">
@@ -325,11 +325,11 @@ include __DIR__ . '/includes/navbar.php';
 
                     <div class="btn-group mb-3 w-100" role="group">
                         <input type="radio" class="btn-check" name="type_post" id="type-statut" value="statut" checked>
-                        <label class="btn btn-outline-secondary" for="type-statut"><i class="bi bi-pencil me-1"></i>Statut</label>
+                        <label class="btn btn-outline-secondary" for="type-statut"><i class="bi bi-pencil me-1"></i><?= t('Statut') ?></label>
                         <input type="radio" class="btn-check" name="type_post" id="type-photo" value="photo">
                         <label class="btn btn-outline-secondary" for="type-photo"><i class="bi bi-image me-1"></i>Photo</label>
                         <input type="radio" class="btn-check" name="type_post" id="type-video" value="video">
-                        <label class="btn btn-outline-secondary" for="type-video"><i class="bi bi-camera-video me-1"></i>Vidéo</label>
+                        <label class="btn btn-outline-secondary" for="type-video"><i class="bi bi-camera-video me-1"></i><?= t('Vidéo') ?></label>
                         <input type="radio" class="btn-check" name="type_post" id="type-cv" value="cv">
                         <label class="btn btn-outline-secondary" for="type-cv"><i class="bi bi-file-person me-1"></i>CV</label>
                     </div>
@@ -340,19 +340,19 @@ include __DIR__ . '/includes/navbar.php';
                             <div class="fw-semibold small mb-1"><?= h($userCourant['prenom'] . ' ' . $userCourant['nom']) ?></div>
                             <select name="visibilite" class="form-select form-select-sm d-inline-block w-auto">
                                 <option value="public">Public</option>
-                                <option value="amis">Amis</option>
-                                <option value="prive">Privé</option>
+                                <option value="amis"><?= t('Amis') ?></option>
+                                <option value="prive"><?= t('Privé') ?></option>
                             </select>
                         </div>
                     </div>
 
                     <div class="position-relative">
                         <textarea name="contenu" id="input-publier-message" class="form-control border-0" rows="4"
-                                  placeholder="Que souhaitez-vous partager ?" style="resize:none;font-size:1rem;background:var(--bg-3)"></textarea>
+                                  placeholder="<?= t('Que souhaitez-vous partager ?') ?>" style="resize:none;font-size:1rem;background:var(--bg-3)"></textarea>
                         
                         <!-- Emoji Picker Button -->
                         <div class="position-absolute bottom-0 end-0 p-2">
-                            <button type="button" class="btn btn-sm btn-light rounded-circle" id="btn-emoji-publier" title="Ajouter un emoji">
+                            <button type="button" class="btn btn-sm btn-light rounded-circle" id="btn-emoji-publier" title="<?= t('Ajouter un emoji') ?>">
                                 <i class="bi bi-emoji-smile text-muted"></i>
                             </button>
                         </div>
@@ -366,9 +366,9 @@ include __DIR__ . '/includes/navbar.php';
                     <div id="zone-upload" class="mt-3" style="display:none">
                         <div class="upload-zone text-center p-4" id="dropzone">
                             <i class="bi bi-cloud-upload fs-2" style="color:var(--text-3)"></i>
-                            <p class="mt-2 small" style="color:var(--text-3)">Glissez-déposez votre fichier ici ou</p>
+                            <p class="mt-2 small" style="color:var(--text-3)"><?= t('Glissez-déposez votre fichier ici ou') ?></p>
                             <label class="btn btn-sm btn-outline-primary">
-                                Choisir un fichier
+                                <?= t('Choisir un fichier') ?>
                                 <input type="file" name="fichier" id="input-fichier" class="d-none">
                             </label>
                             <div id="preview-fichier" class="mt-3 position-relative"></div>
@@ -379,21 +379,21 @@ include __DIR__ . '/includes/navbar.php';
                         <div class="col-sm-6">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                <input type="text" name="lieu" class="form-control" placeholder="Lieu">
+                                <input type="text" name="lieu" class="form-control" placeholder="<?= t('Lieu') ?>">
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="bi bi-emoji-smile"></i></span>
-                                <input type="text" name="humeur" class="form-control" placeholder="Ce que vous ressentez...">
+                                <input type="text" name="humeur" class="form-control" placeholder="<?= t('Ce que vous ressentez...') ?>">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
                     <button type="submit" id="btn-publier" class="btn btn-ecein-primary px-4">
-                        <i class="bi bi-send me-2"></i>Publier
+                        <i class="bi bi-send me-2"></i><?= t('Publier') ?>
                     </button>
                 </div>
             </form>
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold"><i class="bi bi-calendar-event me-2"></i>Publier un événement</h5>
+                <h5 class="modal-title fw-bold"><i class="bi bi-calendar-event me-2"></i><?= t('Publier un événement') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formPublierEvenement">
@@ -459,43 +459,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Titre de l'événement *</label>
-                            <input type="text" name="titre" class="form-control" required placeholder="Ex: Conférence sur l'IA">
+                            <label class="form-label fw-semibold"><?= t('Titre de l\'événement *') ?></label>
+                            <input type="text" name="titre" class="form-control" required placeholder="<?= t('Ex: Conférence sur l\'IA') ?>">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Date de début *</label>
+                            <label class="form-label fw-semibold"><?= t('Date de début *') ?></label>
                             <input type="datetime-local" name="date_debut" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Date de fin</label>
+                            <label class="form-label fw-semibold"><?= t('Date de fin') ?></label>
                             <input type="datetime-local" name="date_fin" class="form-control">
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Lieu</label>
-                            <input type="text" name="lieu" class="form-control" placeholder="Ex: ECE Paris - Salle de conférence">
+                            <label class="form-label fw-semibold"><?= t('Lieu') ?></label>
+                            <input type="text" name="lieu" class="form-control" placeholder="<?= t('Ex: ECE Paris - Salle de conférence') ?>">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Description</label>
-                            <textarea name="description" class="form-control" rows="4" placeholder="Décrivez l'événement..."></textarea>
+                            <textarea name="description" class="form-control" rows="4" placeholder="<?= t('Décrivez l\'événement...') ?>"></textarea>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Lien (optionnel)</label>
+                            <label class="form-label fw-semibold"><?= t('Lien (optionnel)') ?></label>
                             <input type="url" name="lien" class="form-control" placeholder="https://...">
                         </div>
                         <div class="col-12">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="est_officiel" value="1" id="check-officiel">
                                 <label class="form-check-label" for="check-officiel">
-                                    Événement officiel ECE
+                                    <?= t('Événement officiel ECE') ?>
                                 </label>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
                     <button type="submit" class="btn btn-ecein-primary" id="btn-submit-evenement">
-                        <i class="bi bi-send me-2"></i>Publier l'événement
+                        <i class="bi bi-send me-2"></i><?= t('Publier l\'événement') ?>
                     </button>
                 </div>
             </form>
@@ -511,7 +511,7 @@ $('#formPublierEvenement').on('submit', function(e) {
     const $btn = $('#btn-submit-evenement');
     const $btnOriginal = $btn.html();
     
-    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Publication...');
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>' + t('Publication...'));
     
     $.post('api/evenements.php', formData, function(res) {
         if (res.succes) {
@@ -528,7 +528,7 @@ $('#formPublierEvenement').on('submit', function(e) {
         }
     }).fail(function(xhr, status, error) {
         console.error('Erreur AJAX:', {status, error, xhr});
-        afficherToast('Erreur lors de la publication de l\'événement.', 'danger');
+        afficherToast(t('Erreur lors de la publication de l\'événement.'), 'danger');
         $btn.prop('disabled', false).html($btnOriginal);
     });
     
@@ -538,7 +538,7 @@ $('#formPublierEvenement').on('submit', function(e) {
 // Réinitialiser le formulaire quand le modal se ferme
 $('#modalPublierEvenement').on('hidden.bs.modal', function() {
     $('#formPublierEvenement')[0].reset();
-    $('#btn-submit-evenement').prop('disabled', false).html('<i class="bi bi-send me-2"></i>Publier l\'événement');
+    $('#btn-submit-evenement').prop('disabled', false).html('<i class="bi bi-send me-2"></i>' + t('Publier l\'événement'));
 });
 </script>
 <?php endif; ?>

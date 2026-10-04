@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     // Validation : au moins un des deux (pseudo ou email) doit être fourni
     if (empty($pseudo) && empty($email)) {
-        $erreur = 'Veuillez saisir votre pseudo ou votre adresse email.';
+        $erreur = t('Veuillez saisir votre pseudo ou votre adresse email.');
     } else {
         // Recherche de l'utilisateur dans la base de données
         // On cherche par pseudo OU email, et l'utilisateur doit être actif
@@ -62,11 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $utilisateur = $stmt->fetch();
 
         if (!$utilisateur) {
-            $erreur = 'Pseudo ou email introuvable.';
+            $erreur = t('Pseudo ou email introuvable.');
         } elseif (!password_verify($_POST['mot_de_passe'] ?? '', $utilisateur['mot_de_passe'])) {
             // SÉCURITÉ : Vérification du mot de passe avec password_verify()
             // Cette fonction compare le mot de passe en clair avec le hash stocké en base
-            $erreur = 'Mot de passe incorrect.';
+            $erreur = t('Mot de passe incorrect.');
         } else {
             // Connexion réussie : création de la session
             $_SESSION['utilisateur_id'] = $utilisateur['id'];
@@ -117,34 +117,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     // 1. Vérification des champs obligatoires
     if (empty($nom) || empty($prenom) || empty($pseudo) || empty($email) || empty($mdp)) {
-        $erreur = 'Tous les champs sont obligatoires.';
+        $erreur = t('Tous les champs sont obligatoires.');
     }
     // 2. Validation du format email
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $erreur = 'Adresse email invalide.';
+        $erreur = t('Adresse email invalide.');
     }
     // 3. Vérification que l'email est du domaine ECE (sécurité : restriction aux étudiants/professeurs ECE)
     elseif (!str_ends_with($email, '@edu.ece.fr') && !str_ends_with($email, '@ece.fr')) {
-        $erreur = 'Seules les adresses @edu.ece.fr ou @ece.fr sont autorisées.';
+        $erreur = t('Seules les adresses @edu.ece.fr ou @ece.fr sont autorisées.');
     }
     // 4. Vérification de la longueur minimale du mot de passe
     elseif (strlen($mdp) < 8) {
-        $erreur = 'Le mot de passe doit contenir au moins 8 caractères.';
+        $erreur = t('Le mot de passe doit contenir au moins 8 caractères.');
     }
     // 5. Vérification que les deux mots de passe correspondent
     elseif ($mdp !== $mdp2) {
-        $erreur = 'Les mots de passe ne correspondent pas.';
+        $erreur = t('Les mots de passe ne correspondent pas.');
     }
     // 6. Validation du format du pseudo (lettres, chiffres, tirets, underscores, 3-50 caractères)
     elseif (!preg_match('/^[a-z0-9_\-]{3,50}$/i', $pseudo)) {
-        $erreur = 'Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores (3-50 caractères).';
+        $erreur = t('Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores (3-50 caractères).');
     }
     // 7. Vérification de l'unicité du pseudo et email
     else {
         $stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE pseudo = ? OR email = ?");
         $stmt->execute([$pseudo, $email]);
         if ($stmt->fetch()) {
-            $erreur = 'Ce pseudo ou email est déjà utilisé.';
+            $erreur = t('Ce pseudo ou email est déjà utilisé.');
         } else {
             // SÉCURITÉ : Hashage du mot de passe avec bcrypt avant insertion
             // PASSWORD_BCRYPT génère un hash sécurisé avec un salt automatique
@@ -156,23 +156,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 INSERT INTO utilisateurs (pseudo, email, mot_de_passe, nom, prenom, date_inscription)
                 VALUES (?, ?, ?, ?, ?, NOW())
             ")->execute([$pseudo, $email, $hash, $nom, $prenom]);
+
+            // Avatar par défaut : rond coloré avec les initiales (pas de photo générique)
+            $nouvelId = (int) $pdo->lastInsertId();
+            $pdo->prepare("UPDATE utilisateurs SET photo = ? WHERE id = ?")
+                ->execute([genererAvatarInitiales($nouvelId, $prenom, $nom), $nouvelId]);
             
             // Inscription réussie : afficher un message de succès et basculer vers le mode connexion
-            $succes = 'Compte créé ! Vous pouvez vous connecter.';
+            $succes = t('Compte créé ! Vous pouvez vous connecter.');
             $mode = 'connexion';
         }
     }
 }
 
-$pageTitle = 'Connexion';
+$pageTitle = t('Connexion');
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<?= LANG ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#111118">
-    <title>Connexion - <?= SITE_NOM ?></title>
+    <title><?= t('Connexion') ?> - <?= SITE_NOM ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -187,6 +192,13 @@ $pageTitle = 'Connexion';
     <div class="login-bg-grid"></div>
 
     <div class="login-card" style="animation: fadeUp .6s ease-out">
+        <!-- Choix de la langue (FR / EN) -->
+        <div class="d-flex justify-content-end mb-2">
+            <div class="lang-switch" role="group" aria-label="<?= t('Langue') ?>">
+                <a href="<?= h(urlLangue('fr')) ?>" class="<?= LANG === 'fr' ? 'active' : '' ?>" title="Français">FR</a>
+                <a href="<?= h(urlLangue('en')) ?>" class="<?= LANG === 'en' ? 'active' : '' ?>" title="English">EN</a>
+            </div>
+        </div>
         <!-- Logo -->
         <div class="login-logo-row">
             <img src="assets/images/logo.png" alt="Logo ECE In" class="logo-mark" style="width:44px;height:44px;">
@@ -200,11 +212,11 @@ $pageTitle = 'Connexion';
         <div class="d-flex gap-2 mb-4">
             <button class="btn flex-fill <?= $mode === 'connexion' ? 'btn-ecein-primary' : 'btn-light' ?>"
                     id="tab-connexion" onclick="switchMode('connexion')">
-                Connexion
+                <?= t('Connexion') ?>
             </button>
             <button class="btn flex-fill <?= $mode === 'inscription' ? 'btn-ecein-primary' : 'btn-light' ?>"
                     id="tab-inscription" onclick="switchMode('inscription')">
-                S'inscrire
+                <?= t('S\'inscrire') ?>
             </button>
         </div>
 
@@ -222,17 +234,17 @@ $pageTitle = 'Connexion';
                 <input type="hidden" name="action" value="connexion">
 
                 <div class="mb-3">
-                    <label for="pseudo" class="form-label">Pseudo ou Email ECE</label>
+                    <label for="pseudo" class="form-label"><?= t('Pseudo ou Email ECE') ?></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-at" style="color:var(--accent)"></i></span>
                         <input type="text" class="form-control" id="pseudo" name="pseudo"
-                               placeholder="pseudo ou email@edu.ece.fr"
+                               placeholder="<?= t('pseudo ou email@edu.ece.fr') ?>"
                                value="<?= h($_POST['pseudo'] ?? '') ?>" required autofocus>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label for="mot_de_passe" class="form-label">Mot de passe</label>
+                    <label for="mot_de_passe" class="form-label"><?= t('Mot de passe') ?></label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-key" style="color:var(--accent)"></i></span>
                         <input type="password" class="form-control" id="mot_de_passe"
@@ -244,14 +256,9 @@ $pageTitle = 'Connexion';
                 </div>
 
                 <button type="submit" class="btn btn-ecein-primary w-100 py-2 fw-semibold">
-                    Se connecter <i class="bi bi-arrow-right ms-1"></i>
+                    <?= t('Se connecter') ?> <i class="bi bi-arrow-right ms-1"></i>
                 </button>
 
-                <div class="text-center mt-3">
-                    <small style="color:var(--text-3)">
-                        Test : <strong style="color:var(--accent)">adminadmin</strong> / <strong style="color:var(--accent)">admin123</strong>
-                    </small>
-                </div>
             </form>
         </div>
 
@@ -262,19 +269,19 @@ $pageTitle = 'Connexion';
 
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label">Prénom</label>
+                        <label class="form-label"><?= t('Prénom') ?></label>
                         <input type="text" class="form-control" name="prenom"
                                placeholder="Hider" value="<?= h($_POST['prenom'] ?? '') ?>" required>
                     </div>
                     <div class="col-6">
-                        <label class="form-label">Nom</label>
+                        <label class="form-label"><?= t('Nom') ?></label>
                         <input type="text" class="form-control" name="nom"
                                placeholder="Snacel" value="<?= h($_POST['nom'] ?? '') ?>" required>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Pseudo</label>
+                    <label class="form-label"><?= t('Pseudo') ?></label>
                     <div class="input-group">
                         <span class="input-group-text" style="color:var(--accent)">@</span>
                         <input type="text" class="form-control" name="pseudo"
@@ -283,34 +290,34 @@ $pageTitle = 'Connexion';
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Email ECE</label>
+                    <label class="form-label"><?= t('Email ECE') ?></label>
                     <input type="email" class="form-control" name="email"
                            placeholder="hider.snacel@edu.ece.fr" value="<?= h($_POST['email'] ?? '') ?>" required>
-                    <div class="form-text">@edu.ece.fr ou @ece.fr uniquement</div>
+                    <div class="form-text"><?= t('@edu.ece.fr ou @ece.fr uniquement') ?></div>
                 </div>
 
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label">Mot de passe</label>
+                        <label class="form-label"><?= t('Mot de passe') ?></label>
                         <input type="password" class="form-control" name="mot_de_passe"
-                               placeholder="Min. 8 car." required>
+                               placeholder="<?= t('Min. 8 car.') ?>" required>
                     </div>
                     <div class="col-6">
-                        <label class="form-label">Confirmation</label>
+                        <label class="form-label"><?= t('Confirmation') ?></label>
                         <input type="password" class="form-control" name="mot_de_passe2"
-                               placeholder="Répéter" required>
+                               placeholder="<?= t('Répéter') ?>" required>
                     </div>
                 </div>
 
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="cgu" required>
                     <label class="form-check-label small" for="cgu" style="color:var(--text-3)">
-                        J'accepte les <a href="#">conditions d'utilisation</a>
+                        <?= t('J\'accepte les') ?> <a href="#"><?= t('conditions d\'utilisation') ?></a>
                     </label>
                 </div>
 
                 <button type="submit" class="btn btn-ecein-primary w-100 py-2 fw-semibold">
-                    Créer mon compte <i class="bi bi-arrow-right ms-1"></i>
+                    <?= t('Créer mon compte') ?> <i class="bi bi-arrow-right ms-1"></i>
                 </button>
             </form>
         </div>

@@ -11,7 +11,7 @@ $pdo    = getDB();
 $userId = $_SESSION['utilisateur_id'];
 $userCourant = getUtilisateurConnecte();
 $emploiId = (int) ($_GET['id'] ?? 0);
-$pageTitle = 'Contacter le recruteur';
+$pageTitle = t('Contacter le recruteur');
 
 if (!$emploiId) {
     redirect('emplois.php');
@@ -32,12 +32,12 @@ if (!$emploi || !$emploi['contact_email']) {
 }
 
 // Préparer l'email
-$sujet = 'Candidature - ' . $emploi['titre'];
-$corps = "Bonjour,\n\n" .
-         "Je suis intéressé(e) par votre offre : " . $emploi['titre'] . "\n" .
-         "Entreprise : " . $emploi['entreprise'] . "\n\n" .
-         "Je souhaiterais obtenir plus d'informations à ce sujet.\n\n" .
-         "Cordialement,";
+$sujet = t('Candidature') . ' - ' . $emploi['titre'];
+$corps = t('Bonjour,') . "\n\n" .
+         t('Je suis intéressé(e) par votre offre :') . ' ' . $emploi['titre'] . "\n" .
+         t('Entreprise :') . ' ' . $emploi['entreprise'] . "\n\n" .
+         t('Je souhaiterais obtenir plus d\'informations à ce sujet.') . "\n\n" .
+         t('Cordialement,');
 
 // Encoder pour mailto:
 $mailto = 'mailto:' . urlencode($emploi['contact_email']) . 
@@ -55,14 +55,14 @@ include __DIR__ . '/includes/navbar.php';
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h5 class="fw-bold mb-1">
-                        <i class="bi bi-envelope me-2" style="color:var(--accent)"></i>Contacter le recruteur
+                        <i class="bi bi-envelope me-2" style="color:var(--accent)"></i><?= t('Contacter le recruteur') ?>
                     </h5>
                     <p class="mb-0 small" style="color:var(--text-3)">
-                        Envoyez un email au recruteur
+                        <?= t('Envoyez un email au recruteur') ?>
                     </p>
                 </div>
                 <a href="emplois.php" class="btn btn-sm btn-light">
-                    <i class="bi bi-arrow-left me-1"></i>Retour
+                    <i class="bi bi-arrow-left me-1"></i><?= t('Retour') ?>
                 </a>
             </div>
 
@@ -86,43 +86,43 @@ include __DIR__ . '/includes/navbar.php';
             <div class="glass p-4">
                 <h6 class="fw-bold mb-3">
                     <i class="bi bi-person me-2" style="color:var(--accent)"></i>
-                    Informations de contact
+                    <?= t('Informations de contact') ?>
                 </h6>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Email du recruteur</label>
+                    <label class="form-label fw-semibold"><?= t('Email du recruteur') ?></label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="email-contact" 
                                value="<?= h($emploi['contact_email']) ?>" readonly>
                         <button class="btn btn-outline-primary" onclick="copierEmail()">
-                            <i class="bi bi-clipboard me-1"></i>Copier
+                            <i class="bi bi-clipboard me-1"></i><?= t('Copier') ?>
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Sujet de l'email</label>
+                    <label class="form-label fw-semibold"><?= t('Sujet de l\'email') ?></label>
                     <input type="text" class="form-control" id="sujet-email" 
                            value="<?= h($sujet) ?>" readonly>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold">Message (pré-rempli)</label>
+                    <label class="form-label fw-semibold"><?= t('Message (pré-rempli)') ?></label>
                     <textarea class="form-control" rows="8" id="corps-email" readonly><?= h($corps) ?></textarea>
                 </div>
 
                 <div class="d-flex gap-2">
                     <a href="<?= h($mailto) ?>" class="btn btn-ecein-primary" id="btn-outlook">
-                        <i class="bi bi-envelope me-2"></i>Ouvrir dans Outlook / Client email
+                        <i class="bi bi-envelope me-2"></i><?= t('Ouvrir dans Outlook / Client email') ?>
                     </a>
                     <button class="btn btn-outline-primary" onclick="copierTout()">
-                        <i class="bi bi-clipboard me-1"></i>Copier les informations
+                        <i class="bi bi-clipboard me-1"></i><?= t('Copier les informations') ?>
                     </button>
                 </div>
 
                 <div class="alert alert-info mt-3 mb-0">
                     <i class="bi bi-info-circle me-2"></i>
-                    <strong>Note :</strong> Si Outlook ne s'ouvre pas automatiquement, copiez les informations ci-dessus et créez un email manuellement dans Outlook.
+                    <strong><?= t('Note :') ?></strong> <?= t('Si Outlook ne s\'ouvre pas automatiquement, copiez les informations ci-dessus et créez un email manuellement dans Outlook.') ?>
                 </div>
             </div>
         </div>
@@ -138,7 +138,7 @@ function copierEmail() {
     // Afficher un message de confirmation
     const btn = event.target.closest('button');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="bi bi-check me-1"></i>Copié !';
+    btn.innerHTML = '<i class="bi bi-check me-1"></i>' + t('Copié !');
     btn.classList.add('btn-success');
     btn.classList.remove('btn-outline-primary');
     
@@ -154,12 +154,12 @@ function copierTout() {
     const sujet = document.getElementById('sujet-email').value;
     const corps = document.getElementById('corps-email').value;
     
-    const texte = `Email : ${email}\n\nSujet : ${sujet}\n\nMessage :\n${corps}`;
+    const texte = `${t('Email :')} ${email}\n\n${t('Sujet :')} ${sujet}\n\n${t('Message :')}\n${corps}`;
     
     navigator.clipboard.writeText(texte).then(() => {
         const btn = event.target.closest('button');
         const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="bi bi-check me-1"></i>Copié !';
+        btn.innerHTML = '<i class="bi bi-check me-1"></i>' + t('Copié !');
         btn.classList.add('btn-success');
         btn.classList.remove('btn-outline-primary');
         

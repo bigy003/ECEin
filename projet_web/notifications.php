@@ -7,7 +7,7 @@ requireConnexion();
 
 $pdo    = getDB();
 $userId = $_SESSION['utilisateur_id'];
-$pageTitle = 'Notifications';
+$pageTitle = t('Notifications');
 
 $pdo->prepare("UPDATE notifications SET lue = 1 WHERE utilisateur_id = ?")
     ->execute([$userId]);
@@ -42,10 +42,10 @@ include __DIR__ . '/includes/navbar.php';
     <div class="col-lg-8">
         <div class="glass p-0">
             <div class="p-3 d-flex justify-content-between align-items-center" style="border-bottom:1px solid var(--glass-border)">
-                <h6 class="mb-0 fw-bold" style="font-size:.85rem"><i class="bi bi-bell me-2" style="color:var(--accent)"></i>Notifications</h6>
+                <h6 class="mb-0 fw-bold" style="font-size:.85rem"><i class="bi bi-bell me-2" style="color:var(--accent)"></i><?= t('Notifications') ?></h6>
                 <?php if (!empty($notifications)): ?>
                 <button class="btn btn-sm btn-light" onclick="toutMarquerLu()">
-                    <i class="bi bi-check2-all me-1"></i>Tout marquer comme lu
+                    <i class="bi bi-check2-all me-1"></i><?= t('Tout marquer comme lu') ?>
                 </button>
                 <?php endif; ?>
             </div>
@@ -53,7 +53,7 @@ include __DIR__ . '/includes/navbar.php';
                 <?php if (empty($notifications)): ?>
                 <div class="empty-state">
                     <i class="bi bi-bell-slash"></i>
-                    <p>Aucune notification pour l'instant.</p>
+                    <p><?= t('Aucune notification pour l\'instant.') ?></p>
                 </div>
                 <?php else: ?>
                 <?php foreach ($notifications as $notif): ?>
@@ -71,7 +71,7 @@ include __DIR__ . '/includes/navbar.php';
                             <?php if ($notif['expediteur_id']): ?>
                             <strong><?= h($notif['prenom'] . ' ' . $notif['nom']) ?></strong>
                             <?php endif; ?>
-                            <span class="<?= $notif['expediteur_id'] ? '' : 'fw-semibold' ?>"><?= h($notif['message']) ?></span>
+                            <span class="<?= $notif['expediteur_id'] ? '' : 'fw-semibold' ?>"><?= h(traduireNotification($notif['message'])) ?></span>
                             <div class="mt-1" style="font-size:.72rem;color:var(--text-3)"><?= tempsEcoule($notif['date_notification']) ?></div>
                         </div>
 
@@ -117,11 +117,11 @@ include __DIR__ . '/includes/navbar.php';
     <div class="col-lg-4">
         <div class="glass p-0" style="position:sticky;top:70px">
             <div class="p-3" style="border-bottom:1px solid var(--glass-border)">
-                <span class="fw-bold" style="font-size:.85rem"><i class="bi bi-calendar-event me-2" style="color:var(--rose)"></i>Événements à venir</span>
+                <span class="fw-bold" style="font-size:.85rem"><i class="bi bi-calendar-event me-2" style="color:var(--rose)"></i><?= t('Événements à venir') ?></span>
             </div>
             <div class="list-group list-group-flush">
                 <?php if (empty($evenementsAvenir)): ?>
-                <div class="list-group-item small text-center py-3" style="color:var(--text-3)">Aucun événement planifié</div>
+                <div class="list-group-item small text-center py-3" style="color:var(--text-3)"><?= t('Aucun événement planifié') ?></div>
                 <?php else: ?>
                 <?php foreach ($evenementsAvenir as $evt): ?>
                 <div class="list-group-item py-3" style="cursor:pointer" 
@@ -134,15 +134,15 @@ include __DIR__ . '/includes/navbar.php';
                         </div>
                         <div class="flex-grow-1">
                             <?php if ($evt['est_officiel']): ?>
-                            <span class="badge bg-ecein mb-1" style="font-size:.6rem">Officiel</span>
+                            <span class="badge bg-ecein mb-1" style="font-size:.6rem"><?= t('Officiel') ?></span>
                             <?php endif; ?>
                             <div class="fw-semibold small"><?= h($evt['titre']) ?></div>
                             <?php if ($evt['lieu']): ?>
                             <div style="font-size:.72rem;color:var(--text-3)"><i class="bi bi-geo-alt me-1"></i><?= h($evt['lieu']) ?></div>
                             <?php endif; ?>
-                            <div style="font-size:.72rem;color:var(--text-3)">Par <?= h($evt['prenom'] . ' ' . $evt['nom']) ?></div>
+                            <div style="font-size:.72rem;color:var(--text-3)"><?= t('Par') ?> <?= h($evt['prenom'] . ' ' . $evt['nom']) ?></div>
                             <div style="font-size:.7rem;color:var(--accent);margin-top:4px">
-                                <i class="bi bi-arrow-right me-1"></i>Cliquer pour voir plus
+                                <i class="bi bi-arrow-right me-1"></i><?= t('Cliquer pour voir plus') ?>
                             </div>
                         </div>
                     </div>

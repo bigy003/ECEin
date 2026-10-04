@@ -46,7 +46,7 @@ if ($action === 'envoyer_demande') {
 
     // SÉCURITÉ : Vérifier que l'utilisateur ne s'envoie pas une demande à lui-même
     if ($destinataireId === $userId) {
-        echo json_encode(['succes' => false, 'message' => 'Vous ne pouvez pas vous connecter avec vous-même.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous ne pouvez pas vous connecter avec vous-même.')]);
         exit();
     }
 
@@ -57,7 +57,7 @@ if ($action === 'envoyer_demande') {
     $destinataire = $stmtUser->fetch();
 
     if (!$destinataire) {
-        echo json_encode(['succes' => false, 'message' => 'Utilisateur introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Utilisateur introuvable.')]);
         exit();
     }
 
@@ -80,7 +80,7 @@ if ($action === 'envoyer_demande') {
             'refuse'     => 'Cette invitation a été refusée.',
             default      => 'Connexion déjà existante.',
         };
-        echo json_encode(['succes' => false, 'message' => $msg]);
+        echo json_encode(['succes' => false, 'message' => t($msg)]);
         exit();
     }
 
@@ -100,7 +100,7 @@ if ($action === 'envoyer_demande') {
 
     echo json_encode([
         'succes'  => true,
-        'message' => 'Invitation envoyée à ' . $destinataire['prenom'] . ' ' . $destinataire['nom'] . ' !',
+        'message' => t('Invitation envoyée à %s !', $destinataire['prenom'] . ' ' . $destinataire['nom']),
     ]);
     exit();
 }
@@ -135,7 +135,7 @@ if ($action === 'repondre') {
     $connexion = $stmt->fetch();
 
     if (!$connexion) {
-        echo json_encode(['succes' => false, 'message' => 'Invitation introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Invitation introuvable.')]);
         exit();
     }
 
@@ -159,7 +159,7 @@ if ($action === 'repondre') {
     echo json_encode([
         'succes'  => true,
         'statut'  => $statut,
-        'message' => $statut === 'accepte' ? 'Connexion acceptée !' : 'Invitation refusée.',
+        'message' => $statut === 'accepte' ? t('Connexion acceptée !') : t('Invitation refusée.'),
     ]);
     exit();
 }
@@ -173,12 +173,12 @@ if ($action === 'annuler') {
     ");
     $stmt->execute([$connexionId, $userId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Invitation introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Invitation introuvable.')]);
         exit();
     }
 
     $pdo->prepare("DELETE FROM connexions WHERE id = ?")->execute([$connexionId]);
-    echo json_encode(['succes' => true, 'message' => 'Invitation annulée.']);
+    echo json_encode(['succes' => true, 'message' => t('Invitation annulée.')]);
     exit();
 }
 
@@ -197,14 +197,14 @@ if ($action === 'supprimer') {
     $connexion = $stmt->fetch();
 
     if (!$connexion) {
-        echo json_encode(['succes' => false, 'message' => 'Connexion introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Connexion introuvable.')]);
         exit();
     }
 
     // Supprimer la connexion
     $pdo->prepare("DELETE FROM connexions WHERE id = ?")->execute([$connexion['id']]);
-    echo json_encode(['succes' => true, 'message' => 'Vous ne suivez plus cette personne.']);
+    echo json_encode(['succes' => true, 'message' => t('Vous ne suivez plus cette personne.')]);
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

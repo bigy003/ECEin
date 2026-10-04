@@ -20,7 +20,7 @@ $basePath = (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) ? '../' : '';
                     <span class="fw-semibold" style="color:var(--text)">ECE In</span>
                 </div>
                 <p class="small" style="color:var(--text-3)">
-                    Le réseau social professionnel de la communauté ECE Paris.
+                    <?= t('Le réseau social professionnel de la communauté ECE Paris.') ?>
                 </p>
                 <div class="d-flex gap-3 mt-2">
                     <a href="#" style="color:var(--text-3)"><i class="bi bi-linkedin"></i></a>
@@ -32,16 +32,16 @@ $basePath = (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) ? '../' : '';
             <div class="col-sm-6 col-lg-2">
                 <h6 class="fw-semibold mb-2" style="color:var(--accent);font-size:.78rem">Navigation</h6>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="<?= $basePath ?>index.php">Accueil</a></li>
-                    <li><a href="<?= $basePath ?>reseau.php">Réseau</a></li>
-                    <li><a href="<?= $basePath ?>emplois.php">Emplois</a></li>
+                    <li><a href="<?= $basePath ?>index.php"><?= t('Accueil') ?></a></li>
+                    <li><a href="<?= $basePath ?>reseau.php"><?= t('Réseau') ?></a></li>
+                    <li><a href="<?= $basePath ?>emplois.php"><?= t('Emplois') ?></a></li>
                 </ul>
             </div>
 
             <div class="col-sm-6 col-lg-2">
                 <h6 class="fw-semibold mb-2" style="color:var(--accent);font-size:.78rem">ECE Paris</h6>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="https://www.ece.fr" target="_blank" rel="noopener">Site officiel</a></li>
+                    <li><a href="https://www.ece.fr" target="_blank" rel="noopener"><?= t('Site officiel') ?></a></li>
                     <li><a href="https://www.omneseducation.com" target="_blank" rel="noopener">Omnes Education</a></li>
                 </ul>
             </div>
@@ -59,11 +59,11 @@ $basePath = (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) ? '../' : '';
     <div class="footer-bottom">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
             <p class="mb-0 small" style="color:var(--text-3)">
-                &copy; <?= date('Y') ?> ECE In – Projet Web ING2 2026
+                &copy; <?= date('Y') ?> ECE In · Projet Web ING2 2026
             </p>
             <div class="d-flex gap-3">
-                <a href="#" class="small" style="color:var(--text-3)">Mentions légales</a>
-                <a href="#" class="small" style="color:var(--text-3)">CGU</a>
+                <a href="#" class="small" style="color:var(--text-3)"><?= t('Mentions légales') ?></a>
+                <a href="#" class="small" style="color:var(--text-3)"><?= t('CGU') ?></a>
             </div>
         </div>
     </div>

@@ -22,7 +22,7 @@ if ($action === 'ajouter') {
     $emploiId = (int) ($_POST['emploi_id'] ?? 0);
     
     if (!$emploiId) {
-        echo json_encode(['succes' => false, 'message' => 'ID d\'offre manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID d\'offre manquant.')]);
         exit();
     }
     
@@ -30,7 +30,7 @@ if ($action === 'ajouter') {
     $stmt = $pdo->prepare("SELECT id FROM emplois WHERE id = ? AND actif = 1");
     $stmt->execute([$emploiId]);
     if (!$stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Offre introuvable.']);
+        echo json_encode(['succes' => false, 'message' => t('Offre introuvable.')]);
         exit();
     }
     
@@ -38,7 +38,7 @@ if ($action === 'ajouter') {
     $stmt = $pdo->prepare("SELECT id FROM favoris_emplois WHERE utilisateur_id = ? AND emploi_id = ?");
     $stmt->execute([$userId, $emploiId]);
     if ($stmt->fetch()) {
-        echo json_encode(['succes' => false, 'message' => 'Cette offre est déjà dans vos favoris.']);
+        echo json_encode(['succes' => false, 'message' => t('Cette offre est déjà dans vos favoris.')]);
         exit();
     }
     
@@ -47,9 +47,9 @@ if ($action === 'ajouter') {
         $pdo->prepare("INSERT INTO favoris_emplois (utilisateur_id, emploi_id) VALUES (?, ?)")
             ->execute([$userId, $emploiId]);
         
-        echo json_encode(['succes' => true, 'message' => 'Offre ajoutée aux favoris.']);
+        echo json_encode(['succes' => true, 'message' => t('Offre ajoutée aux favoris.')]);
     } catch (PDOException $e) {
-        echo json_encode(['succes' => false, 'message' => 'Erreur lors de l\'ajout.']);
+        echo json_encode(['succes' => false, 'message' => t('Erreur lors de l\'ajout.')]);
     }
     exit();
 }
@@ -59,7 +59,7 @@ if ($action === 'retirer') {
     $emploiId = (int) ($_POST['emploi_id'] ?? 0);
     
     if (!$emploiId) {
-        echo json_encode(['succes' => false, 'message' => 'ID d\'offre manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID d\'offre manquant.')]);
         exit();
     }
     
@@ -68,9 +68,9 @@ if ($action === 'retirer') {
     $stmt->execute([$userId, $emploiId]);
     
     if ($stmt->rowCount() > 0) {
-        echo json_encode(['succes' => true, 'message' => 'Offre retirée des favoris.']);
+        echo json_encode(['succes' => true, 'message' => t('Offre retirée des favoris.')]);
     } else {
-        echo json_encode(['succes' => false, 'message' => 'Offre non trouvée dans vos favoris.']);
+        echo json_encode(['succes' => false, 'message' => t('Offre non trouvée dans vos favoris.')]);
     }
     exit();
 }
@@ -109,4 +109,4 @@ if ($action === 'liste') {
     exit();
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

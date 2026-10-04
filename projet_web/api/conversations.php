@@ -41,12 +41,12 @@ if ($action === 'creer_groupe') {
     $participants = $_POST['participants'] ?? [];
     
     if (empty($nomGroupe)) {
-        echo json_encode(['succes' => false, 'message' => 'Le nom du groupe est requis.']);
+        echo json_encode(['succes' => false, 'message' => t('Le nom du groupe est requis.')]);
         exit;
     }
     
     if (empty($participants) || !is_array($participants)) {
-        echo json_encode(['succes' => false, 'message' => 'Veuillez sélectionner au moins un participant.']);
+        echo json_encode(['succes' => false, 'message' => t('Veuillez sélectionner au moins un participant.')]);
         exit;
     }
     
@@ -58,7 +58,7 @@ if ($action === 'creer_groupe') {
     });
     
     if (empty($participantsIds)) {
-        echo json_encode(['succes' => false, 'message' => 'Aucun participant valide.']);
+        echo json_encode(['succes' => false, 'message' => t('Aucun participant valide.')]);
         exit;
     }
     
@@ -69,7 +69,7 @@ if ($action === 'creer_groupe') {
         
         // Créer la conversation de groupe avec photo par défaut
         // Tous les groupes ont une photo par défaut au moment de la création
-        $photoDefaut = 'assets/images/default_avatar.jpeg';
+        $photoDefaut = 'assets/images/default_avatar.svg';
         $stmt = $pdo->prepare("INSERT INTO conversations (nom, est_groupe, photo) VALUES (?, 1, ?)");
         $stmt->execute([$nomGroupe, $photoDefaut]);
         $conversationId = $pdo->lastInsertId();
@@ -99,13 +99,13 @@ if ($action === 'creer_groupe') {
         
         echo json_encode([
             'succes' => true,
-            'message' => 'Groupe créé avec succès.',
+            'message' => t('Groupe créé avec succès.'),
             'conversation_id' => $conversationId
         ]);
     } catch (PDOException $e) {
         $pdo->rollBack();
         error_log('Erreur création groupe: ' . $e->getMessage());
-        echo json_encode(['succes' => false, 'message' => 'Erreur lors de la création du groupe.']);
+        echo json_encode(['succes' => false, 'message' => t('Erreur lors de la création du groupe.')]);
     }
     exit;
 }
@@ -117,7 +117,7 @@ if ($action === 'modifier_groupe') {
     $photo = $_POST['photo'] ?? null; // URL de la photo (peut être null)
     
     if (!$conversationId) {
-        echo json_encode(['succes' => false, 'message' => 'ID de conversation manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID de conversation manquant.')]);
         exit;
     }
     
@@ -129,7 +129,7 @@ if ($action === 'modifier_groupe') {
     ");
     $stmtCheck->execute([$conversationId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Vous ne faites pas partie de ce groupe.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous ne faites pas partie de ce groupe.')]);
         exit;
     }
     
@@ -149,7 +149,7 @@ if ($action === 'modifier_groupe') {
         }
         
         if (empty($updates)) {
-            echo json_encode(['succes' => false, 'message' => 'Aucune modification à apporter.']);
+            echo json_encode(['succes' => false, 'message' => t('Aucune modification à apporter.')]);
             exit;
         }
         
@@ -160,11 +160,11 @@ if ($action === 'modifier_groupe') {
         
         echo json_encode([
             'succes' => true,
-            'message' => 'Groupe modifié avec succès.'
+            'message' => t('Groupe modifié avec succès.')
         ]);
     } catch (PDOException $e) {
         error_log('Erreur modification groupe: ' . $e->getMessage());
-        echo json_encode(['succes' => false, 'message' => 'Erreur lors de la modification du groupe.']);
+        echo json_encode(['succes' => false, 'message' => t('Erreur lors de la modification du groupe.')]);
     }
     exit;
 }
@@ -174,7 +174,7 @@ if ($action === 'participants_groupe') {
     $conversationId = (int) ($_GET['conversation_id'] ?? 0);
     
     if (!$conversationId) {
-        echo json_encode(['succes' => false, 'message' => 'ID de conversation manquant.']);
+        echo json_encode(['succes' => false, 'message' => t('ID de conversation manquant.')]);
         exit;
     }
     
@@ -182,7 +182,7 @@ if ($action === 'participants_groupe') {
     $stmtCheck = $pdo->prepare("SELECT 1 FROM conversation_participants WHERE conversation_id = ? AND utilisateur_id = ?");
     $stmtCheck->execute([$conversationId, $userId]);
     if (!$stmtCheck->fetchColumn()) {
-        echo json_encode(['succes' => false, 'message' => 'Vous ne faites pas partie de ce groupe.']);
+        echo json_encode(['succes' => false, 'message' => t('Vous ne faites pas partie de ce groupe.')]);
         exit;
     }
     
@@ -201,9 +201,9 @@ if ($action === 'participants_groupe') {
         echo json_encode(['succes' => true, 'participants' => $participants]);
     } catch (PDOException $e) {
         error_log('Erreur SQL dans participants_groupe: ' . $e->getMessage());
-        echo json_encode(['succes' => false, 'message' => 'Erreur de base de données.']);
+        echo json_encode(['succes' => false, 'message' => t('Erreur de base de données.')]);
     }
     exit;
 }
 
-echo json_encode(['succes' => false, 'message' => 'Action non reconnue.']);
+echo json_encode(['succes' => false, 'message' => t('Action non reconnue.')]);

@@ -13,7 +13,7 @@ require_once __DIR__ . '/../config/config.php';
 // Fonction utilitaire pour retourner une réponse JSON
 function retournerReponseJSON($succes, $message, $data = []) {
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(array_merge(['succes' => $succes, 'message' => $message], $data));
+    echo json_encode(array_merge(['succes' => $succes, 'message' => t($message)], $data));
     exit();
 }
 

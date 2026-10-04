@@ -57,7 +57,7 @@ $(document).ready(function () {
         formData.set('type', $('input[name="type_post"]:checked').val() || 'statut');
 
         // Désactiver le bouton et afficher le spinner
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Publication...');
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>' + t('Publication...'));
         
         // S'ASSURER QUE LE MODAL RESTE INTERACTIF
         // Forcer le z-index du modal pour qu'il soit au-dessus de tout
@@ -91,33 +91,33 @@ $(document).ready(function () {
                         $modal.modal('hide');
                     }
                     // Afficher message de succès
-                    afficherToast('Publication créée avec succès !', 'success');
+                    afficherToast(t('Publication créée avec succès !'), 'success');
                     // Recharger la page pour afficher le post
                     setTimeout(function() {
                         location.reload();
                     }, 500);
                 } else {
-                    afficherToast(res?.message || 'Erreur lors de la publication.', 'danger');
-                    $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>Publier');
+                    afficherToast(res?.message || t('Erreur lors de la publication.'), 'danger');
+                    $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>' + t('Publier'));
                 }
             },
             error: function (xhr, status, error) {
                 console.error('Erreur AJAX:', {status, error, xhr});
-                let message = 'Erreur lors de la publication.';
+                let message = t('Erreur lors de la publication.');
                 if (status === 'timeout') {
-                    message = 'La requête a pris trop de temps. Veuillez réessayer.';
+                    message = t('La requête a pris trop de temps. Veuillez réessayer.');
                 } else if (xhr.status === 0) {
-                    message = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+                    message = t('Impossible de contacter le serveur. Vérifiez votre connexion.');
                 }
                 afficherToast(message, 'danger');
-                $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>Publier');
+                $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>' + t('Publier'));
             },
             complete: function () {
                 // S'assurer que le bouton est réactivé même en cas d'erreur
                 setTimeout(function() {
                     if ($btn.prop('disabled')) {
                         console.warn('Bouton toujours désactivé, réactivation forcée');
-                        $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>Publier');
+                        $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>' + t('Publier'));
                     }
                 }, 1000);
             },
@@ -129,7 +129,7 @@ $(document).ready(function () {
     // SÉCURITÉ : Réactiver le formulaire quand le modal se ferme
     $('#modalPublier').on('hidden.bs.modal', function() {
         const $btn = $('#btn-publier');
-        $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>Publier');
+        $btn.prop('disabled', false).html('<i class="bi bi-send me-2"></i>' + t('Publier'));
         $('#formPublier')[0].reset();
     });
 
@@ -142,7 +142,7 @@ $(document).ready(function () {
 
         if (!file) return;
 
-        let btnSupprimer = `<button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle shadow" id="btn-supprimer-media" title="Supprimer"><i class="bi bi-x"></i></button>`;
+        let btnSupprimer = `<button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 rounded-circle shadow" id="btn-supprimer-media" title="${t('Supprimer')}"><i class="bi bi-x"></i></button>`;
 
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
@@ -220,7 +220,7 @@ function reagir(postId, typeReaction, btn) {
             // Mettre à jour le compteur dans le post
             const $compteur = $btn.closest('.post-card').find('.reaction-emoji').parent();
             if ($compteur.length && res.nb_reactions > 0) {
-                $compteur.html(`<span class="reaction-emoji">👍</span> ${res.nb_reactions} réaction${res.nb_reactions > 1 ? 's' : ''}`);
+                $compteur.html(`<span class="reaction-emoji">👍</span> ${res.nb_reactions} ${res.nb_reactions > 1 ? t('réactions') : t('réaction')}`);
             }
         }
     });
@@ -243,7 +243,7 @@ function afficherCommentaires(postId) {
             $liste.empty();
 
             if (res.commentaires.length === 0) {
-                $liste.html('<p class="text-muted small text-center">Aucun commentaire. Soyez le premier !</p>');
+                $liste.html('<p class="text-muted small text-center">' + t('Aucun commentaire. Soyez le premier !') + '</p>');
             } else {
                 res.commentaires.forEach(function (c) {
                     $liste.append(creerHTMLCommentaire(c));
@@ -309,7 +309,7 @@ function creerHTMLCommentaire(c) {
                 data-commentaire-id="${c.id}"
                 data-date-commentaire="${c.date_commentaire}"
                 style="font-size:.7rem;color:var(--text-3);padding:0;margin-left:4px"
-                title="Modifier (délai: 30 secondes)">
+                title="${t('Modifier (délai: 30 secondes)')}">
             <i class="bi bi-pencil"></i>
         </button>` : '';
     
@@ -358,7 +358,7 @@ function envoyerCommentaire(postId) {
             if ($compteur.length) {
                 const actuel = parseInt($compteur.text()) || 0;
                 const newCount = actuel + 1;
-                $compteur.text(`${newCount} commentaire${newCount > 1 ? 's' : ''}`);
+                $compteur.text(`${newCount} ${newCount > 1 ? t('commentaires') : t('commentaire')}`);
             }
         } else {
             afficherToast(res.message, 'danger');
@@ -369,14 +369,14 @@ function envoyerCommentaire(postId) {
 // ===================== MODIFIER UN COMMENTAIRE =====================
 
 function editerCommentaire(commentaireId, contenuActuel) {
-    const nouveauContenu = prompt('Modifier le commentaire :', contenuActuel);
+    const nouveauContenu = prompt(t('Modifier le commentaire :'), contenuActuel);
     
     if (nouveauContenu === null || nouveauContenu.trim() === contenuActuel.trim()) {
         return; // Annulé ou pas de changement
     }
     
     if (!nouveauContenu.trim()) {
-        afficherToast('Le commentaire ne peut pas être vide.', 'warning');
+        afficherToast(t('Le commentaire ne peut pas être vide.'), 'warning');
         return;
     }
     
@@ -388,7 +388,7 @@ function editerCommentaire(commentaireId, contenuActuel) {
         if (res.succes) {
             // Mettre à jour le contenu du commentaire dans l'interface
             $(`#contenu-commentaire-${commentaireId}`).text(res.commentaire.contenu);
-            afficherToast('Commentaire modifié avec succès.', 'success');
+            afficherToast(t('Commentaire modifié avec succès.'), 'success');
             
             // Vérifier si le bouton modifier doit être retiré (délai dépassé)
             const dateCommentaire = new Date(res.commentaire.date_commentaire);
@@ -398,24 +398,24 @@ function editerCommentaire(commentaireId, contenuActuel) {
                 $(`#commentaire-${commentaireId} .btn-link`).remove();
             }
         } else {
-            afficherToast(res.message || 'Erreur lors de la modification.', 'danger');
+            afficherToast(res.message || t('Erreur lors de la modification.'), 'danger');
         }
     }).fail(function() {
-        afficherToast('Erreur lors de la modification du commentaire.', 'danger');
+        afficherToast(t('Erreur lors de la modification du commentaire.'), 'danger');
     });
 }
 
 // ===================== PARTAGER UN POST =====================
 
 function partager(postId) {
-    const contenu = prompt('Ajouter un commentaire à ce partage (optionnel) :') ?? '';
+    const contenu = prompt(t('Ajouter un commentaire à ce partage (optionnel) :')) ?? '';
     $.post('api/posts.php', {
         action:  'partager',
         post_id: postId,
         contenu: contenu,
     }, function (res) {
         if (res.succes) {
-            afficherToast('Publication partagée !', 'success');
+            afficherToast(t('Publication partagée !'), 'success');
             setTimeout(() => location.reload(), 1500);
         } else {
             afficherToast(res.message, 'danger');
@@ -440,7 +440,7 @@ function modifierPost(postId) {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header border-0">
-                        <h5 class="modal-title fw-bold">Modifier la publication</h5>
+                        <h5 class="modal-title fw-bold">${t('Modifier la publication')}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <form id="formModifierPost" enctype="multipart/form-data">
@@ -449,38 +449,38 @@ function modifierPost(postId) {
                             <input type="hidden" name="post_id" value="${postId}">
                             
                             <textarea name="contenu" id="input-modifier-contenu" class="form-control border-0" rows="4"
-                                      placeholder="Que souhaitez-vous partager ?" style="resize:none;font-size:1rem;background:var(--bg-3)">${escapeHtml(contenu)}</textarea>
+                                      placeholder="${t('Que souhaitez-vous partager ?')}" style="resize:none;font-size:1rem;background:var(--bg-3)">${escapeHtml(contenu)}</textarea>
                             
                             <div class="mt-3">
-                                <label class="form-label small fw-semibold">Visibilité</label>
+                                <label class="form-label small fw-semibold">${t('Visibilité')}</label>
                                 <select name="visibilite" class="form-select form-select-sm">
                                     <option value="public" ${visibilite === 'public' ? 'selected' : ''}>Public</option>
-                                    <option value="amis" ${visibilite === 'amis' ? 'selected' : ''}>Amis</option>
-                                    <option value="prive" ${visibilite === 'prive' ? 'selected' : ''}>Privé</option>
+                                    <option value="amis" ${visibilite === 'amis' ? 'selected' : ''}>${t('Amis')}</option>
+                                    <option value="prive" ${visibilite === 'prive' ? 'selected' : ''}>${t('Privé')}</option>
                                 </select>
                             </div>
                             
                             <div class="row g-2 mt-2">
                                 <div class="col-6">
                                     <input type="text" name="lieu" class="form-control form-control-sm" 
-                                           placeholder="Lieu" value="${escapeHtml(lieu)}">
+                                           placeholder="${t('Lieu')}" value="${escapeHtml(lieu)}">
                                 </div>
                                 <div class="col-6">
                                     <input type="text" name="humeur" class="form-control form-control-sm" 
-                                           placeholder="Humeur" value="${escapeHtml(humeur)}">
+                                           placeholder="${t('Humeur')}" value="${escapeHtml(humeur)}">
                                 </div>
                             </div>
                             
                             <div class="mt-3">
-                                <label class="form-label small fw-semibold">Changer le fichier (optionnel)</label>
+                                <label class="form-label small fw-semibold">${t('Changer le fichier (optionnel)')}</label>
                                 <input type="file" name="fichier" id="input-modifier-fichier" class="form-control form-control-sm">
-                                ${fichier ? `<small class="text-muted d-block mt-1">Fichier actuel : ${escapeHtml(fichier.split('/').pop())}</small>` : ''}
+                                ${fichier ? `<small class="text-muted d-block mt-1">${t('Fichier actuel :')} ${escapeHtml(fichier.split('/').pop())}</small>` : ''}
                             </div>
                         </div>
                         <div class="modal-footer border-0">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">${t('Annuler')}</button>
                             <button type="submit" class="btn btn-ecein-primary">
-                                <i class="bi bi-check2 me-2"></i>Enregistrer les modifications
+                                <i class="bi bi-check2 me-2"></i>${t('Enregistrer les modifications')}
                             </button>
                         </div>
                     </form>
@@ -502,7 +502,7 @@ function modifierPost(postId) {
         const $btn = $(this).find('[type="submit"]');
         const formData = new FormData(this);
 
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Modification...');
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>' + t('Modification...'));
 
         $.ajax({
             url: 'api/posts.php',
@@ -521,10 +521,10 @@ function modifierPost(postId) {
                 }
             },
             error: function() {
-                afficherToast('Erreur lors de la modification.', 'danger');
+                afficherToast(t('Erreur lors de la modification.'), 'danger');
             },
             complete: function() {
-                $btn.prop('disabled', false).html('<i class="bi bi-check2 me-2"></i>Enregistrer les modifications');
+                $btn.prop('disabled', false).html('<i class="bi bi-check2 me-2"></i>' + t('Enregistrer les modifications'));
             }
         });
     });
@@ -538,7 +538,7 @@ function modifierPost(postId) {
 // ===================== SUPPRIMER UN POST =====================
 
 function supprimerPost(postId) {
-    if (!confirm('Supprimer cette publication définitivement ?')) return;
+    if (!confirm(t('Supprimer cette publication définitivement ?'))) return;
 
     $.post('api/posts.php', {
         action:  'supprimer',
@@ -546,7 +546,7 @@ function supprimerPost(postId) {
     }, function (res) {
         if (res.succes) {
             $(`#post-${postId}`).fadeOut(400, function () { $(this).remove(); });
-            afficherToast('Publication supprimée.', 'success');
+            afficherToast(t('Publication supprimée.'), 'success');
         } else {
             afficherToast(res.message, 'danger');
         }
@@ -564,7 +564,7 @@ function envoyerDemande(userId, btn) {
         destinataire_id:  userId,
     }, function (res) {
         if (res.succes) {
-            $btn.html('<i class="bi bi-check2 me-1"></i>Invitation envoyée').removeClass('btn-outline-primary').addClass('btn-success');
+            $btn.html('<i class="bi bi-check2 me-1"></i>' + t('Invitation envoyée')).removeClass('btn-outline-primary').addClass('btn-success');
             afficherToast(res.message, 'success');
         } else {
             $btn.prop('disabled', false);
@@ -597,7 +597,7 @@ function repondreInvitation(connexionId, reponse, btn) {
 // ===================== ANNULER UNE INVITATION =====================
 
 function annulerInvitation(connexionId, btn) {
-    if (!confirm('Annuler cette invitation ?')) return;
+    if (!confirm(t('Annuler cette invitation ?'))) return;
     const $btn = $(btn);
 
     $.post('api/amis.php', {
@@ -606,7 +606,7 @@ function annulerInvitation(connexionId, btn) {
     }, function (res) {
         if (res.succes) {
             $btn.closest('.col-sm-6').fadeOut(300, function () { $(this).remove(); });
-            afficherToast('Invitation annulée.', 'info');
+            afficherToast(t('Invitation annulée.'), 'info');
         } else {
             afficherToast(res.message, 'danger');
         }
@@ -616,7 +616,7 @@ function annulerInvitation(connexionId, btn) {
 // ===================== NE PLUS SUIVRE (SUPPRIMER CONNEXION) =====================
 
 function supprimerConnexion(autreId, btn) {
-    if (!confirm('Êtes-vous sûr de vouloir ne plus suivre cette personne ?')) return;
+    if (!confirm(t('Êtes-vous sûr de vouloir ne plus suivre cette personne ?'))) return;
     const $btn = $(btn);
     $btn.prop('disabled', true);
 
@@ -638,7 +638,7 @@ function supprimerConnexion(autreId, btn) {
 // ===================== SUPPRIMER UNE FORMATION =====================
 
 function supprimerFormation(id, btn) {
-    if (!confirm('Supprimer cette formation ?')) return;
+    if (!confirm(t('Supprimer cette formation ?'))) return;
     $.post('api/profil.php', { action: 'supprimer_formation', id: id }, function (res) {
         if (res.succes) {
             $(btn).closest('.timeline-item').fadeOut(300);
@@ -651,7 +651,7 @@ function supprimerFormation(id, btn) {
 // ===================== SUPPRIMER UN PROJET =====================
 
 function supprimerProjet(id, btn) {
-    if (!confirm('Supprimer ce projet ?')) return;
+    if (!confirm(t('Supprimer ce projet ?'))) return;
     $.post('api/profil.php', { action: 'supprimer_projet', id: id }, function (res) {
         if (res.succes) {
             $(btn).closest('.col-md-6').fadeOut(300);
@@ -758,9 +758,9 @@ function afficherDetailsEmploi(emploi) {
         day: 'numeric'
     };
     
-    const dateDebutStr = dateDebut ? dateDebut.toLocaleDateString('fr-FR', optionsDate) : null;
-    const dateLimiteStr = dateLimite ? dateLimite.toLocaleDateString('fr-FR', optionsDate) : null;
-    const datePublicationStr = datePublication ? datePublication.toLocaleDateString('fr-FR', optionsDate) : null;
+    const dateDebutStr = dateDebut ? dateDebut.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', optionsDate) : null;
+    const dateLimiteStr = dateLimite ? dateLimite.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', optionsDate) : null;
+    const datePublicationStr = datePublication ? datePublication.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', optionsDate) : null;
     
     // Couleurs des badges selon le type
     const badgeColors = {
@@ -789,32 +789,32 @@ function afficherDetailsEmploi(emploi) {
                             </div>
                             <div class="flex-grow-1">
                                 <div class="fw-semibold mb-2" style="color:var(--accent);font-size:1rem">${escapeHtml(emploi.entreprise)}</div>
-                                <span class="badge ${badgeClass}" style="font-size:.7rem">${escapeHtml(emploi.type ? emploi.type.charAt(0).toUpperCase() + emploi.type.slice(1) : '')}</span>
+                                <span class="badge ${badgeClass}" style="font-size:.7rem">${escapeHtml(libelleTypeEmploi(emploi.type))}</span>
                             </div>
                         </div>
                         
                         <div class="row g-3 mb-3">
                             ${emploi.lieu ? `
                             <div class="col-md-6">
-                                <strong><i class="bi bi-geo-alt me-2"></i>Lieu :</strong><br>
+                                <strong><i class="bi bi-geo-alt me-2"></i>${t('Lieu :')}</strong><br>
                                 <span style="color:var(--text-2)">${escapeHtml(emploi.lieu)}</span>
                             </div>
                             ` : ''}
                             ${emploi.salaire ? `
                             <div class="col-md-6">
-                                <strong><i class="bi bi-cash me-2"></i>Salaire :</strong><br>
+                                <strong><i class="bi bi-cash me-2"></i>${t('Salaire :')}</strong><br>
                                 <span style="color:var(--text-2)">${escapeHtml(emploi.salaire)}</span>
                             </div>
                             ` : ''}
                             ${dateDebutStr ? `
                             <div class="col-md-6">
-                                <strong><i class="bi bi-calendar-event me-2"></i>Date de début :</strong><br>
+                                <strong><i class="bi bi-calendar-event me-2"></i>${t('Date de début :')}</strong><br>
                                 <span style="color:var(--text-2)">${dateDebutStr}</span>
                             </div>
                             ` : ''}
                             ${dateLimiteStr ? `
                             <div class="col-md-6">
-                                <strong><i class="bi bi-clock me-2" style="color:var(--rose)"></i>Date limite :</strong><br>
+                                <strong><i class="bi bi-clock me-2" style="color:var(--rose)"></i>${t('Date limite :')}</strong><br>
                                 <span style="color:var(--rose)">${dateLimiteStr}</span>
                             </div>
                             ` : ''}
@@ -822,43 +822,43 @@ function afficherDetailsEmploi(emploi) {
                         
                         ${emploi.description ? `
                         <div class="mb-3">
-                            <strong><i class="bi bi-file-text me-2"></i>Description :</strong>
+                            <strong><i class="bi bi-file-text me-2"></i>${t('Description :')}</strong>
                             <div class="mt-2" style="color:var(--text-2);white-space:pre-wrap">${escapeHtml(emploi.description)}</div>
                         </div>
                         ` : ''}
                         
                         ${emploi.lien_candidature ? `
                         <div class="mb-2">
-                            <strong><i class="bi bi-link-45deg me-2"></i>Lien de candidature :</strong><br>
+                            <strong><i class="bi bi-link-45deg me-2"></i>${t('Lien de candidature :')}</strong><br>
                             <a href="${escapeHtml(emploi.lien_candidature)}" target="_blank" rel="noopener" style="color:var(--accent)">${escapeHtml(emploi.lien_candidature)}</a>
                         </div>
                         ` : ''}
                         
                         ${emploi.contact_email ? `
                         <div class="mb-2">
-                            <strong><i class="bi bi-envelope me-2"></i>Email de contact :</strong><br>
+                            <strong><i class="bi bi-envelope me-2"></i>${t('Email de contact :')}</strong><br>
                             <a href="mailto:${escapeHtml(emploi.contact_email)}" style="color:var(--accent)">${escapeHtml(emploi.contact_email)}</a>
                         </div>
                         ` : ''}
                         
                         ${emploi.prenom && emploi.nom ? `
                         <div class="mb-2">
-                            <strong><i class="bi bi-person me-2"></i>Publié par :</strong><br>
+                            <strong><i class="bi bi-person me-2"></i>${t('Publié par :')}</strong><br>
                             <span style="color:var(--text-2)">${escapeHtml(emploi.prenom + ' ' + emploi.nom)}</span>
                             ${datePublicationStr ? ` · ${datePublicationStr}` : ''}
                         </div>
                         ` : ''}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">${t('Fermer')}</button>
                         <button class="btn btn-light btn-favori-modal" 
                                 data-emploi-id="${emploi.id}" 
                                 onclick="toggleFavori(${emploi.id}, this)" 
-                                title="Sauvegarder">
+                                title="${t('Sauvegarder')}">
                             <i class="bi bi-bookmark"></i>
                         </button>
-                        <a href="candidater.php?id=${emploi.id}" class="btn btn-ecein-primary"><i class="bi bi-send me-1"></i>Candidater</a>
-                        ${emploi.contact_email ? `<a href="contacter.php?id=${emploi.id}" class="btn btn-outline-primary"><i class="bi bi-envelope me-1"></i>Contacter</a>` : ''}
+                        <a href="candidater.php?id=${emploi.id}" class="btn btn-ecein-primary"><i class="bi bi-send me-1"></i>${t('Candidater')}</a>
+                        ${emploi.contact_email ? `<a href="contacter.php?id=${emploi.id}" class="btn btn-outline-primary"><i class="bi bi-envelope me-1"></i>${t('Contacter')}</a>` : ''}
                     </div>
                 </div>
             </div>
@@ -910,8 +910,8 @@ function afficherDetailsEvenement(evt) {
         minute: '2-digit'
     };
     
-    const dateDebutStr = dateDebut.toLocaleDateString('fr-FR', optionsDate);
-    const dateFinStr = dateFin ? dateFin.toLocaleDateString('fr-FR', optionsDate) : null;
+    const dateDebutStr = dateDebut.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', optionsDate);
+    const dateFinStr = dateFin ? dateFin.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', optionsDate) : null;
     
     // Construire le HTML du modal
     let html = `
@@ -925,30 +925,30 @@ function afficherDetailsEvenement(evt) {
                     <div class="modal-body">
                         <div class="d-flex gap-3 mb-3">
                             <div class="evenement-date-badge text-center flex-shrink-0">
-                                <div class="evt-mois">${dateDebut.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase()}</div>
+                                <div class="evt-mois">${dateDebut.toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR', { month: 'short' }).toUpperCase()}</div>
                                 <div class="evt-jour">${dateDebut.getDate()}</div>
                             </div>
                             <div class="flex-grow-1">
-                                ${evt.est_officiel ? '<span class="badge bg-ecein mb-2">Officiel ECE</span>' : ''}
+                                ${evt.est_officiel ? '<span class="badge bg-ecein mb-2">' + t('Officiel ECE') + '</span>' : ''}
                                 <div class="mb-2">
-                                    <strong><i class="bi bi-calendar-event me-2"></i>Date de début :</strong><br>
+                                    <strong><i class="bi bi-calendar-event me-2"></i>${t('Date de début :')}</strong><br>
                                     <span style="color:var(--text-2)">${dateDebutStr}</span>
                                 </div>
                                 ${dateFinStr ? `
                                 <div class="mb-2">
-                                    <strong><i class="bi bi-calendar-check me-2"></i>Date de fin :</strong><br>
+                                    <strong><i class="bi bi-calendar-check me-2"></i>${t('Date de fin :')}</strong><br>
                                     <span style="color:var(--text-2)">${dateFinStr}</span>
                                 </div>
                                 ` : ''}
                                 ${evt.lieu ? `
                                 <div class="mb-2">
-                                    <strong><i class="bi bi-geo-alt me-2"></i>Lieu :</strong><br>
+                                    <strong><i class="bi bi-geo-alt me-2"></i>${t('Lieu :')}</strong><br>
                                     <span style="color:var(--text-2)">${escapeHtml(evt.lieu)}</span>
                                 </div>
                                 ` : ''}
                                 ${evt.prenom && evt.nom ? `
                                 <div class="mb-2">
-                                    <strong><i class="bi bi-person me-2"></i>Organisateur :</strong><br>
+                                    <strong><i class="bi bi-person me-2"></i>${t('Organisateur :')}</strong><br>
                                     <span style="color:var(--text-2)">${escapeHtml(evt.prenom + ' ' + evt.nom)}</span>
                                 </div>
                                 ` : ''}
@@ -956,20 +956,20 @@ function afficherDetailsEvenement(evt) {
                         </div>
                         ${evt.description ? `
                         <div class="mb-3">
-                            <strong><i class="bi bi-file-text me-2"></i>Description :</strong>
+                            <strong><i class="bi bi-file-text me-2"></i>${t('Description :')}</strong>
                             <div class="mt-2" style="color:var(--text-2);white-space:pre-wrap">${escapeHtml(evt.description)}</div>
                         </div>
                         ` : ''}
                         ${evt.lien ? `
                         <div class="mb-3">
-                            <strong><i class="bi bi-link-45deg me-2"></i>Lien :</strong><br>
+                            <strong><i class="bi bi-link-45deg me-2"></i>${t('Lien :')}</strong><br>
                             <a href="${escapeHtml(evt.lien)}" target="_blank" rel="noopener" style="color:var(--accent)">${escapeHtml(evt.lien)}</a>
                         </div>
                         ` : ''}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Fermer</button>
-                        ${evt.lien ? `<a href="${escapeHtml(evt.lien)}" target="_blank" rel="noopener" class="btn btn-ecein-primary">Voir le lien</a>` : ''}
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">${t('Fermer')}</button>
+                        ${evt.lien ? `<a href="${escapeHtml(evt.lien)}" target="_blank" rel="noopener" class="btn btn-ecein-primary">${t('Voir le lien')}</a>` : ''}
                     </div>
                 </div>
             </div>
@@ -993,6 +993,17 @@ function afficherDetailsEvenement(evt) {
     document.getElementById('modalDetailsEvenement').addEventListener('hidden.bs.modal', function() {
         this.remove();
     });
+}
+
+/**
+ * Libellé lisible (et traduit) d'un type d'offre d'emploi
+ * @param {string} type - stage, alternance, cdi, cdd, freelance, benevole
+ * @returns {string}
+ */
+function libelleTypeEmploi(type) {
+    const libelles = { stage: 'Stage', alternance: 'Alternance', cdi: 'CDI', cdd: 'CDD', freelance: 'Freelance', benevole: 'Bénévolat' };
+    if (!type) return '';
+    return t(libelles[type] || type.charAt(0).toUpperCase() + type.slice(1));
 }
 
 /**
@@ -1024,8 +1035,8 @@ function tempsEcoule(dateStr) {
         const minutes = String(date.getMinutes()).padStart(2, '0');
         return hours + ':' + minutes;
     }
-    if (diff < 604800) return Math.floor(diff / 86400) + ' j';
-    return new Date(dateStr).toLocaleDateString('fr-FR');
+    if (diff < 604800) return Math.floor(diff / 86400) + (window.LANG === 'en' ? 'd' : ' j');
+    return new Date(dateStr).toLocaleDateString(window.LANG === 'en' ? 'en-US' : 'fr-FR');
 }
 
 // ===================== GESTION DU THÈME COULEUR =====================
@@ -1045,11 +1056,11 @@ window.changerTheme = function(themeName) {
     localStorage.setItem('ecein_theme_' + uid, themeName);
     
     // Optionnel : afficher une petite notif
-    let nomTheme = 'Bleu (Défaut)';
-    if (themeName === 'rouge') nomTheme = 'Rouge';
-    if (themeName === 'jaune') nomTheme = 'Jaune orangé';
-    if (themeName === 'violet') nomTheme = 'Violet';
-    afficherToast('Thème changé en ' + nomTheme, 'success');
+    let nomTheme = t('Bleu (Défaut)');
+    if (themeName === 'rouge') nomTheme = t('Rouge');
+    if (themeName === 'jaune') nomTheme = t('Jaune orangé');
+    if (themeName === 'violet') nomTheme = t('Violet');
+    afficherToast(t('Thème changé en') + ' ' + nomTheme, 'success');
 };
 
 // ===================== GESTION DES FAVORIS EMPLOIS =====================
@@ -1109,21 +1120,21 @@ function toggleFavori(emploiId, bouton) {
                     icon.classList.remove('bi-bookmark');
                     icon.classList.add('bi-bookmark-fill');
                 }
-                afficherToast('Offre ajoutée aux favoris', 'success');
+                afficherToast(t('Offre ajoutée aux favoris'), 'success');
             } else {
                 bouton.classList.remove('active');
                 if (icon) {
                     icon.classList.remove('bi-bookmark-fill');
                     icon.classList.add('bi-bookmark');
                 }
-                afficherToast('Offre retirée des favoris', 'info');
+                afficherToast(t('Offre retirée des favoris'), 'info');
             }
         } else {
-            afficherToast(data.message || 'Erreur', 'error');
+            afficherToast(data.message || t('Erreur'), 'error');
         }
     })
     .catch(error => {
         console.error('Erreur:', error);
-        afficherToast('Erreur lors de la sauvegarde', 'error');
+        afficherToast(t('Erreur lors de la sauvegarde'), 'error');
     });
 }

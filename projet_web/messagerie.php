@@ -18,7 +18,7 @@ requireConnexion(); // Vérifie que l'utilisateur est connecté, sinon redirige 
 $pdo         = getDB(); // Connexion à la base de données
 $userId      = $_SESSION['utilisateur_id']; // ID de l'utilisateur connecté
 $userCourant = getUtilisateurConnecte(); // Récupère les infos complètes de l'utilisateur
-$pageTitle   = 'Messagerie'; // Titre de la page (affiché dans l'en-tête)
+$pageTitle   = t('Messagerie'); // Titre de la page (affiché dans l'en-tête)
 $pageScript  = 'messagerie.js'; // Script JavaScript à charger (gestion des appels, envoi de messages)
 
 // Récupération de l'ID du contact depuis l'URL (si création d'une nouvelle conversation)
@@ -293,28 +293,28 @@ include __DIR__ . '/includes/navbar.php';
         <!-- Liste des conversations -->
         <div class="col-md-4 col-lg-3" style="border-right:1px solid var(--glass-border)">
             <div class="p-3 d-flex justify-content-between align-items-center" style="border-bottom:1px solid var(--glass-border)">
-                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-chat-dots me-2" style="color:var(--accent)"></i>Messages</h6>
+                <h6 class="fw-bold mb-0" style="font-size:.85rem"><i class="bi bi-chat-dots me-2" style="color:var(--accent)"></i><?= t('Messages') ?></h6>
                 <div class="d-flex gap-1">
                     <button class="btn btn-sm btn-ecein-primary" style="width:32px;height:32px;padding:0;border-radius:10px"
-                            data-bs-toggle="modal" data-bs-target="#modalNouveauGroupe" title="Nouveau groupe">
+                            data-bs-toggle="modal" data-bs-target="#modalNouveauGroupe" title="<?= t('Nouveau groupe') ?>">
                         <i class="bi bi-people-fill" style="font-size:.8rem"></i>
                     </button>
                 <button class="btn btn-sm btn-ecein-primary" style="width:32px;height:32px;padding:0;border-radius:10px"
-                        data-bs-toggle="modal" data-bs-target="#modalNouvelleConv" title="Nouvelle conversation">
+                        data-bs-toggle="modal" data-bs-target="#modalNouvelleConv" title="<?= t('Nouvelle conversation') ?>">
                     <i class="bi bi-plus-lg" style="font-size:.8rem"></i>
                 </button>
                 </div>
             </div>
             <div class="p-2" style="border-bottom:1px solid var(--glass-border)">
-                <label for="recherche-conv" class="visually-hidden">Rechercher parmi vos conversations</label>
-                <input type="search" class="form-control form-control-sm" placeholder="Rechercher parmi vos conversations..."
+                <label for="recherche-conv" class="visually-hidden"><?= t('Rechercher parmi vos conversations') ?></label>
+                <input type="search" class="form-control form-control-sm" placeholder="<?= t('Rechercher parmi vos conversations...') ?>"
                        id="recherche-conv" oninput="filtrerConversations(this.value)" style="border-radius:var(--radius-sm)">
             </div>
             <div class="liste-conversations" style="overflow-y:auto;max-height:510px">
                 <?php if (empty($conversations)): ?>
                 <div class="text-center p-4 small" style="color:var(--text-3)">
                     <i class="bi bi-chat fs-2 d-block mb-2" style="opacity:.25"></i>
-                    Aucune conversation
+                    <?= t('Aucune conversation') ?>
                 </div>
                 <?php else: ?>
                 <?php foreach ($conversations as $conv): ?>
@@ -337,9 +337,9 @@ include __DIR__ . '/includes/navbar.php';
                    data-message="<?= h($dernierMsgRecherche) ?>">
                     <div class="position-relative flex-shrink-0">
                         <?php if ($conv['est_groupe']): ?>
-                        <img src="<?= h($conv['photo'] ?? 'assets/images/default_avatar.jpeg') ?>" alt="" class="rounded-3" width="44" height="44" style="object-fit:cover">
+                        <img src="<?= h($conv['photo'] ?? 'assets/images/default_avatar.svg') ?>" alt="" class="rounded-3" width="44" height="44" style="object-fit:cover">
                         <?php else: ?>
-                        <img src="<?= h($conv['contact_photo'] ?? 'assets/images/default_avatar.jpeg') ?>"
+                        <img src="<?= h($conv['contact_photo'] ?? 'assets/images/default_avatar.svg') ?>"
                              alt="" class="rounded-3" width="44" height="44" style="object-fit:cover">
                         <?php endif; ?>
                         <?php if ($conv['nb_non_lus'] > 0): ?>
@@ -363,7 +363,7 @@ include __DIR__ . '/includes/navbar.php';
                             <?php endif; ?>
                         </div>
                         <div class="text-truncate" style="font-size:.75rem;color:var(--text-3)">
-                            <?= h(substr($conv['dernier_message'] ?? 'Démarrer la conversation...', 0, 50)) ?>
+                            <?= h(substr($conv['dernier_message'] ?? t('Démarrer la conversation...'), 0, 50)) ?>
                         </div>
                     </div>
                 </a>
@@ -378,19 +378,19 @@ include __DIR__ . '/includes/navbar.php';
             <div class="p-3 d-flex align-items-center gap-3" style="border-bottom:1px solid var(--glass-border)">
                 <?php if ($conversationActif && $conversationActif['est_groupe']): ?>
                 <div class="position-relative" style="cursor:pointer;" onclick="ouvrirModalModifierGroupe()">
-                    <img src="<?= h($conversationActif['photo'] ?? 'assets/images/default_avatar.jpeg') ?>" alt="" class="rounded-3" width="40" height="40" style="object-fit:cover">
+                    <img src="<?= h($conversationActif['photo'] ?? 'assets/images/default_avatar.svg') ?>" alt="" class="rounded-3" width="40" height="40" style="object-fit:cover">
                     <div class="position-absolute" style="bottom:-2px;right:-2px;background:var(--accent);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;">
                         <i class="bi bi-pencil-fill" style="font-size:0.6rem;color:white;"></i>
                     </div>
                 </div>
                 <div class="flex-grow-1">
-                    <div class="fw-bold small" style="cursor:pointer;" onclick="ouvrirModalModifierGroupe()"><?= h($conversationActif['nom'] ?? 'Groupe') ?></div>
+                    <div class="fw-bold small" style="cursor:pointer;" onclick="ouvrirModalModifierGroupe()"><?= h($conversationActif['nom'] ?? t('Groupe')) ?></div>
                     <div style="font-size:.72rem;color:var(--text-3)">
-                        <?= count($participantsGroupe) ?> participant<?= count($participantsGroupe) > 1 ? 's' : '' ?>
+                        <?= count($participantsGroupe) ?> <?= count($participantsGroupe) > 1 ? t('participants') : t('participant') ?>
                     </div>
                 </div>
                 <?php elseif ($contactActif): ?>
-                <img src="<?= h($contactActif['photo'] ?? 'assets/images/default_avatar.jpeg') ?>" alt="" class="rounded-3" width="40" height="40" style="object-fit:cover">
+                <img src="<?= h($contactActif['photo'] ?? 'assets/images/default_avatar.svg') ?>" alt="" class="rounded-3" width="40" height="40" style="object-fit:cover">
                 <div>
                     <div class="fw-bold small"><?= h(($contactActif['prenom'] ?? '') . ' ' . ($contactActif['nom'] ?? '')) ?></div>
                     <div style="font-size:.72rem;color:var(--text-3)"><?= h($contactActif['titre'] ?? '') ?></div>
@@ -398,20 +398,20 @@ include __DIR__ . '/includes/navbar.php';
                 <?php endif; ?>
                 <div class="ms-auto d-flex gap-2">
                     <?php if ($conversationActif && $conversationActif['est_groupe']): ?>
-                    <button class="btn btn-sm btn-light" onclick="lancerAppelGroupe('audio')" title="Appel audio groupe" style="border-radius:10px">
+                    <button class="btn btn-sm btn-light" onclick="lancerAppelGroupe('audio')" title="<?= t('Appel audio groupe') ?>" style="border-radius:10px">
                         <i class="bi bi-telephone-fill" style="color:var(--emerald)"></i>
                     </button>
-                    <button class="btn btn-sm btn-light" onclick="lancerAppelGroupe('video')" title="Appel vidéo groupe" style="border-radius:10px">
+                    <button class="btn btn-sm btn-light" onclick="lancerAppelGroupe('video')" title="<?= t('Appel vidéo groupe') ?>" style="border-radius:10px">
                         <i class="bi bi-camera-video-fill" style="color:var(--accent)"></i>
                     </button>
                     <?php elseif ($contactActif): ?>
-                    <button class="btn btn-sm btn-light" onclick="lancerAppel('audio')" title="Appel audio" style="border-radius:10px">
+                    <button class="btn btn-sm btn-light" onclick="lancerAppel('audio')" title="<?= t('Appel audio') ?>" style="border-radius:10px">
                         <i class="bi bi-telephone-fill" style="color:var(--emerald)"></i>
                     </button>
-                    <button class="btn btn-sm btn-light" onclick="lancerAppel('video')" title="Appel vidéo" style="border-radius:10px">
+                    <button class="btn btn-sm btn-light" onclick="lancerAppel('video')" title="<?= t('Appel vidéo') ?>" style="border-radius:10px">
                         <i class="bi bi-camera-video-fill" style="color:var(--accent)"></i>
                     </button>
-                    <a href="utilisateur.php?id=<?= $contactActif['id'] ?? 0 ?>" class="btn btn-sm btn-light" title="Voir profil" style="border-radius:10px">
+                    <a href="utilisateur.php?id=<?= $contactActif['id'] ?? 0 ?>" class="btn btn-sm btn-light" title="<?= t('Voir profil') ?>" style="border-radius:10px">
                         <i class="bi bi-person"></i>
                     </a>
                     <?php endif; ?>
@@ -434,14 +434,14 @@ include __DIR__ . '/includes/navbar.php';
                     
                     <?php if ($estMoi && !$estSupprime): ?>
                     <div class="message-actions me-2 d-flex flex-column gap-1" style="opacity: 0; transition: opacity 0.2s;">
-                        <button class="btn btn-sm btn-light py-0 px-1 btn-edit-msg" title="Modifier" onclick="editerMessage(<?= $msg['id'] ?>)" <?= $modifiable ? '' : 'style="display:none;"' ?>><i class="bi bi-pencil" style="font-size:0.75rem;"></i></button>
-                        <button class="btn btn-sm btn-light py-0 px-1 text-danger btn-delete-msg" title="Supprimer" onclick="supprimerMessage(<?= $msg['id'] ?>)"><i class="bi bi-trash" style="font-size:0.75rem;"></i></button>
+                        <button class="btn btn-sm btn-light py-0 px-1 btn-edit-msg" title="<?= t('Modifier') ?>" onclick="editerMessage(<?= $msg['id'] ?>)" <?= $modifiable ? '' : 'style="display:none;"' ?>><i class="bi bi-pencil" style="font-size:0.75rem;"></i></button>
+                        <button class="btn btn-sm btn-light py-0 px-1 text-danger btn-delete-msg" title="<?= t('Supprimer') ?>" onclick="supprimerMessage(<?= $msg['id'] ?>)"><i class="bi bi-trash" style="font-size:0.75rem;"></i></button>
                     </div>
                     <?php endif; ?>
 
                     <div class="message-bulle <?= $estMoi ? 'message-bubble-moi' : 'message-bubble-autre' ?> <?= $estSupprime ? 'fst-italic text-muted' : '' ?>" id="msg-content-<?= $msg['id'] ?>">
                         <?php if ($estSupprime): ?>
-                            <div><i class="bi bi-slash-circle me-1"></i> Ce message a été supprimé.</div>
+                            <div><i class="bi bi-slash-circle me-1"></i> <?= t('Ce message a été supprimé.') ?></div>
                         <?php else: ?>
                             <?php if (!empty($msg['fichier_joint'])): ?>
                                 <div class="mb-2">
@@ -449,7 +449,7 @@ include __DIR__ . '/includes/navbar.php';
                                     $ext = strtolower(pathinfo($msg['fichier_joint'], PATHINFO_EXTENSION));
                                     if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
                                         <a href="<?= h($msg['fichier_joint']) ?>" target="_blank">
-                                            <img src="<?= h($msg['fichier_joint']) ?>" alt="Pièce jointe" class="img-fluid rounded" style="max-height: 200px;">
+                                            <img src="<?= h($msg['fichier_joint']) ?>" alt="<?= t('Pièce jointe') ?>" class="img-fluid rounded" style="max-height: 200px;">
                                         </a>
                                     <?php else: ?>
                                         <a href="<?= h($msg['fichier_joint']) ?>" target="_blank" class="text-decoration-none d-flex align-items-center gap-2 p-2 bg-light rounded text-dark" style="background: rgba(255,255,255,0.2) !important;">
@@ -463,7 +463,7 @@ include __DIR__ . '/includes/navbar.php';
                                 <div class="msg-text"><?= nl2br(h($msg['contenu'])) ?></div>
                             <?php endif; ?>
                             <?php if ($estModifie): ?>
-                                <small class="text-white-50" style="font-size: 0.65rem;">(modifié)</small>
+                                <small class="text-white-50" style="font-size: 0.65rem;">(<?= t('modifié') ?>)</small>
                             <?php endif; ?>
                         <?php endif; ?>
                         <div class="d-flex align-items-center gap-1" style="justify-content: <?= $estMoi ? 'flex-end' : 'flex-start'; ?>;">
@@ -496,9 +496,9 @@ include __DIR__ . '/includes/navbar.php';
                 <div class="empty-state">
                     <i class="bi bi-chat-dots"></i>
                     <?php if ($conversationActif && $conversationActif['est_groupe']): ?>
-                    <p>Démarrez la conversation dans <?= h($conversationActif['nom'] ?? 'ce groupe') ?> !</p>
+                    <p><?= t('Démarrez la conversation dans %s !', h($conversationActif['nom'] ?? t('ce groupe'))) ?></p>
                     <?php elseif ($contactActif): ?>
-                    <p>Démarrez la conversation avec <?= h($contactActif['prenom'] ?? 'cette personne') ?> !</p>
+                    <p><?= t('Démarrez la conversation avec %s !', h($contactActif['prenom'] ?? t('cette personne'))) ?></p>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -515,12 +515,12 @@ include __DIR__ . '/includes/navbar.php';
                         <button type="button" class="btn btn-light" id="btn-emoji" title="Emoji" style="border-radius:var(--radius-sm) 0 0 var(--radius-sm)">
                             <i class="bi bi-emoji-smile"></i>
                         </button>
-                        <button type="button" class="btn btn-light border-start-0" id="btn-piece-jointe" title="Joindre un fichier" onclick="document.getElementById('input-fichier').click()">
+                        <button type="button" class="btn btn-light border-start-0" id="btn-piece-jointe" title="<?= t('Joindre un fichier') ?>" onclick="document.getElementById('input-fichier').click()">
                             <i class="bi bi-paperclip"></i>
                         </button>
                         <input type="file" name="fichier" id="input-fichier" style="display:none" onchange="previewFile(this)">
                         <input type="text" name="contenu" id="input-message" class="form-control"
-                               placeholder="Écrivez votre message..." autocomplete="off">
+                               placeholder="<?= t('Écrivez votre message...') ?>" autocomplete="off">
                         <button type="submit" class="btn btn-ecein-primary" id="btn-envoyer" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0">
                             <i class="bi bi-send-fill"></i>
                         </button>
@@ -535,10 +535,10 @@ include __DIR__ . '/includes/navbar.php';
             <?php else: ?>
             <div class="d-flex flex-column align-items-center justify-content-center h-100 p-4" style="color:var(--text-3)">
                 <i class="bi bi-chat-dots-fill fs-1 mb-3" style="opacity:.25"></i>
-                <h5 class="fw-semibold" style="color:var(--text)">Vos messages</h5>
-                <p class="text-center small">Sélectionnez une conversation ou démarrez-en une nouvelle</p>
+                <h5 class="fw-semibold" style="color:var(--text)"><?= t('Vos messages') ?></h5>
+                <p class="text-center small"><?= t('Sélectionnez une conversation ou démarrez-en une nouvelle') ?></p>
                 <button class="btn btn-ecein-primary" data-bs-toggle="modal" data-bs-target="#modalNouvelleConv">
-                    <i class="bi bi-plus-lg me-2"></i>Nouvelle conversation
+                    <i class="bi bi-plus-lg me-2"></i><?= t('Nouvelle conversation') ?>
                 </button>
             </div>
             <?php endif; ?>
@@ -550,10 +550,10 @@ include __DIR__ . '/includes/navbar.php';
 <div class="modal fade" id="modalNouvelleConv" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="position:relative;z-index:1055;">
-            <div class="modal-header"><h5 class="modal-title fw-bold">Nouvelle conversation</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title fw-bold"><?= t('Nouvelle conversation') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body" style="position:relative;z-index:1056;">
-                <label for="search-amis-modal" class="visually-hidden">Rechercher parmi tous les utilisateurs ECE In</label>
-                <input type="search" class="form-control mb-3" id="search-amis-modal" placeholder="Rechercher parmi tous les utilisateurs ECE In..." oninput="filtrerAmis(this.value)">
+                <label for="search-amis-modal" class="visually-hidden"><?= t('Rechercher parmi tous les utilisateurs ECE In') ?></label>
+                <input type="search" class="form-control mb-3" id="search-amis-modal" placeholder="<?= t('Rechercher parmi tous les utilisateurs ECE In...') ?>" oninput="filtrerAmis(this.value)">
                 <div class="liste-amis-modal" style="max-height:350px;overflow-y:auto;position:relative;z-index:1057;">
                     <?php foreach ($tousUtilisateurs as $utilisateur): ?>
                     <a href="messagerie.php?contact=<?= $utilisateur['id'] ?>"
@@ -572,12 +572,12 @@ include __DIR__ . '/includes/navbar.php';
                     </a>
                     <?php endforeach; ?>
                     <?php if (empty($tousUtilisateurs)): ?>
-                    <p class="text-center small" style="color:var(--text-3)">Aucun utilisateur disponible</p>
+                    <p class="text-center small" style="color:var(--text-3)"><?= t('Aucun utilisateur disponible') ?></p>
                     <?php endif; ?>
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
             </div>
         </div>
     </div>
@@ -588,19 +588,19 @@ include __DIR__ . '/includes/navbar.php';
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="position:relative;z-index:1055;">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Nouveau groupe</h5>
+                <h5 class="modal-title fw-bold"><?= t('Nouveau groupe') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" style="position:relative;z-index:1056;">
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">Nom du groupe</label>
-                    <input type="text" id="nom-groupe" class="form-control" placeholder="Ex: Groupe d'étude" maxlength="200">
+                    <label class="form-label small fw-semibold"><?= t('Nom du groupe') ?></label>
+                    <input type="text" id="nom-groupe" class="form-control" placeholder="<?= t('Ex: Groupe d\'étude') ?>" maxlength="200">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">Participants</label>
-                    <input type="search" id="search-participants-groupe" class="form-control mb-2" placeholder="Rechercher parmi vos connexions..." oninput="filtrerAmisGroupe(this.value)">
+                    <label class="form-label small fw-semibold"><?= t('Participants') ?></label>
+                    <input type="search" id="search-participants-groupe" class="form-control mb-2" placeholder="<?= t('Rechercher parmi vos connexions...') ?>" oninput="filtrerAmisGroupe(this.value)">
                     <div id="participants-selectionnes" class="mb-2" style="min-height:40px;">
-                        <small class="text-muted">Aucun participant sélectionné</small>
+                        <small class="text-muted"><?= t('Aucun participant sélectionné') ?></small>
                     </div>
                 </div>
                 <div class="liste-amis-groupe" style="max-height:300px;overflow-y:auto;position:relative;z-index:1057;">
@@ -619,13 +619,13 @@ include __DIR__ . '/includes/navbar.php';
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($amis)): ?>
-                    <p class="text-center small" style="color:var(--text-3)">Aucune connexion disponible</p>
+                    <p class="text-center small" style="color:var(--text-3)"><?= t('Aucune connexion disponible') ?></p>
                     <?php endif; ?>
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-ecein-primary" onclick="creerGroupe()">Créer le groupe</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
+                <button type="button" class="btn btn-ecein-primary" onclick="creerGroupe()"><?= t('Créer le groupe') ?></button>
             </div>
         </div>
     </div>
@@ -637,15 +637,15 @@ include __DIR__ . '/includes/navbar.php';
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="position:relative;z-index:1055;">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Modifier le groupe</h5>
+                <h5 class="modal-title fw-bold"><?= t('Modifier le groupe') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3 text-center">
-                    <label class="form-label small fw-semibold d-block mb-2">Photo du groupe</label>
+                    <label class="form-label small fw-semibold d-block mb-2"><?= t('Photo du groupe') ?></label>
                     <div class="position-relative d-inline-block">
-                        <img id="preview-groupe-photo" src="<?= !empty($conversationActif['photo']) ? h($conversationActif['photo']) : 'assets/images/default_avatar.jpeg' ?>" 
-                             alt="Photo du groupe" class="rounded-circle" width="100" height="100" style="object-fit:cover;cursor:pointer;"
+                        <img id="preview-groupe-photo" src="<?= !empty($conversationActif['photo']) ? h($conversationActif['photo']) : 'assets/images/default_avatar.svg' ?>" 
+                             alt="<?= t('Photo du groupe') ?>" class="rounded-circle" width="100" height="100" style="object-fit:cover;cursor:pointer;"
                              onclick="document.getElementById('input-groupe-photo').click()">
                         <div class="position-absolute" style="bottom:0;right:0;background:var(--accent);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;"
                              onclick="document.getElementById('input-groupe-photo').click()">
@@ -655,15 +655,15 @@ include __DIR__ . '/includes/navbar.php';
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">Nom du groupe</label>
+                    <label class="form-label small fw-semibold"><?= t('Nom du groupe') ?></label>
                     <input type="text" id="nom-groupe-modifier" class="form-control" 
                            value="<?= h($conversationActif['nom'] ?? '') ?>" 
-                           placeholder="Nom du groupe" maxlength="200">
+                           placeholder="<?= t('Nom du groupe') ?>" maxlength="200">
                 </div>
             </div>
             <div class="modal-footer border-0" style="position:relative;z-index:1056;">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="pointer-events:auto;">Annuler</button>
-                <button type="button" class="btn btn-ecein-primary" onclick="sauvegarderModificationsGroupe()" style="pointer-events:auto;">Enregistrer</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="pointer-events:auto;"><?= t('Annuler') ?></button>
+                <button type="button" class="btn btn-ecein-primary" onclick="sauvegarderModificationsGroupe()" style="pointer-events:auto;"><?= t('Enregistrer') ?></button>
             </div>
         </div>
     </div>
@@ -685,25 +685,25 @@ include __DIR__ . '/includes/navbar.php';
         
         <!-- Info d'appel (affichée quand pas de vidéo) -->
         <div id="call-info" class="call-info">
-            <img id="call-avatar" src="assets/images/default_avatar.jpeg" alt="" class="call-avatar">
+            <img id="call-avatar" src="assets/images/default_avatar.svg" alt="" class="call-avatar">
             <h4 id="call-name" class="call-name"></h4>
             <p id="call-status" class="call-status"></p>
             <p id="call-timer" class="call-timer" style="display:none">00:00</p>
         </div>
         <div class="call-controls">
             <div id="call-controls-active" style="display:none">
-                <button class="call-btn call-btn-muted" onclick="toggleMute()" id="btn-mute" title="Micro"><i class="bi bi-mic-fill"></i></button>
-                <button class="call-btn call-btn-muted" onclick="toggleCamera()" id="btn-camera" title="Caméra" style="display:none"><i class="bi bi-camera-video-fill"></i></button>
-                <button class="call-btn call-btn-light" onclick="ouvrirModalAjouterParticipant()" title="Ajouter une personne" id="btn-add-participant" style="display:none;"><i class="bi bi-person-plus-fill"></i></button>
-                <button class="call-btn call-btn-danger" onclick="terminerAppel()" title="Raccrocher"><i class="bi bi-telephone-x-fill"></i></button>
+                <button class="call-btn call-btn-muted" onclick="toggleMute()" id="btn-mute" title="<?= t('Micro') ?>"><i class="bi bi-mic-fill"></i></button>
+                <button class="call-btn call-btn-muted" onclick="toggleCamera()" id="btn-camera" title="<?= t('Caméra') ?>" style="display:none"><i class="bi bi-camera-video-fill"></i></button>
+                <button class="call-btn call-btn-light" onclick="ouvrirModalAjouterParticipant()" title="<?= t('Ajouter une personne') ?>" id="btn-add-participant" style="display:none;"><i class="bi bi-person-plus-fill"></i></button>
+                <button class="call-btn call-btn-danger" onclick="terminerAppel()" title="<?= t('Raccrocher') ?>"><i class="bi bi-telephone-x-fill"></i></button>
             </div>
             <div id="call-controls-incoming" style="display:none">
-                <button class="call-btn call-btn-success call-btn-ring" onclick="accepterAppel()" title="Décrocher"><i class="bi bi-telephone-fill"></i></button>
-                <button class="call-btn call-btn-danger" onclick="refuserAppel()" title="Refuser"><i class="bi bi-telephone-x-fill"></i></button>
+                <button class="call-btn call-btn-success call-btn-ring" onclick="accepterAppel()" title="<?= t('Décrocher') ?>"><i class="bi bi-telephone-fill"></i></button>
+                <button class="call-btn call-btn-danger" onclick="refuserAppel()" title="<?= t('Refuser') ?>"><i class="bi bi-telephone-x-fill"></i></button>
             </div>
             <div id="call-controls-outgoing" style="display:none">
-                <button class="call-btn call-btn-light" onclick="ouvrirModalAjouterParticipant()" title="Ajouter une personne" id="btn-add-participant-outgoing" style="display:none;"><i class="bi bi-person-plus-fill"></i></button>
-                <button class="call-btn call-btn-danger" onclick="annulerAppel()" title="Annuler"><i class="bi bi-telephone-x-fill"></i></button>
+                <button class="call-btn call-btn-light" onclick="ouvrirModalAjouterParticipant()" title="<?= t('Ajouter une personne') ?>" id="btn-add-participant-outgoing" style="display:none;"><i class="bi bi-person-plus-fill"></i></button>
+                <button class="call-btn call-btn-danger" onclick="annulerAppel()" title="<?= t('Annuler') ?>"><i class="bi bi-telephone-x-fill"></i></button>
             </div>
         </div>
     </div>
@@ -714,13 +714,13 @@ include __DIR__ . '/includes/navbar.php';
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">Ajouter une personne à l'appel</h5>
+                <h5 class="modal-title fw-bold"><?= t('Ajouter une personne à l\'appel') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="search-participant" class="visually-hidden">Rechercher un contact</label>
-                    <input type="text" class="form-control" id="search-participant" placeholder="Rechercher un contact...">
+                    <label for="search-participant" class="visually-hidden"><?= t('Rechercher un contact') ?></label>
+                    <input type="text" class="form-control" id="search-participant" placeholder="<?= t('Rechercher un contact...') ?>">
                 </div>
                 <div id="liste-contacts-appel" style="max-height: 300px; overflow-y: auto;">
                     <!-- Liste des contacts sera chargée ici -->
@@ -768,21 +768,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const CONV_ID = <?= $convActiveId ?>;
 const USER_ID = <?= $userId ?>;
-const USER_PHOTO = <?= json_encode($userCourant['photo'] ?? 'assets/images/default_avatar.jpeg') ?>;
+const USER_PHOTO = <?= json_encode($userCourant['photo'] ?? 'assets/images/default_avatar.svg') ?>;
 <?php if ($conversationActif && $conversationActif['est_groupe']): ?>
 const CONTACT_ID = 0;
-const CONTACT_NAME = <?= json_encode($conversationActif['nom'] ?? 'Groupe') ?>;
-const CONTACT_PHOTO = 'assets/images/default_avatar.jpeg';
+const CONTACT_NAME = <?= json_encode($conversationActif['nom'] ?? t('Groupe')) ?>;
+const CONTACT_PHOTO = 'assets/images/default_avatar.svg';
 const IS_GROUP = true;
 <?php elseif ($contactActif): ?>
 const CONTACT_ID = <?= $contactActif['id'] ?? 0 ?>;
 const CONTACT_NAME = <?= json_encode(($contactActif['prenom'] ?? '') . ' ' . ($contactActif['nom'] ?? '')) ?>;
-const CONTACT_PHOTO = <?= json_encode($contactActif['photo'] ?? 'assets/images/default_avatar.jpeg') ?>;
+const CONTACT_PHOTO = <?= json_encode($contactActif['photo'] ?? 'assets/images/default_avatar.svg') ?>;
 const IS_GROUP = false;
 <?php else: ?>
 const CONTACT_ID = 0;
 const CONTACT_NAME = '';
-const CONTACT_PHOTO = 'assets/images/default_avatar.jpeg';
+const CONTACT_PHOTO = 'assets/images/default_avatar.svg';
 const IS_GROUP = false;
 <?php endif; ?>
 
@@ -865,7 +865,7 @@ function filtrerConversations(q) {
         var noResultsDiv = document.createElement('div');
         noResultsDiv.className = 'text-center p-4 small no-results-conv';
         noResultsDiv.style.color = 'var(--text-3)';
-        noResultsDiv.innerHTML = '<i class="bi bi-search fs-4 d-block mb-2" style="opacity:.25"></i>Aucune conversation trouvée';
+        noResultsDiv.innerHTML = '<i class="bi bi-search fs-4 d-block mb-2" style="opacity:.25"></i>' + t('Aucune conversation trouvée');
         liste.appendChild(noResultsDiv);
     }
 }
@@ -908,7 +908,7 @@ function filtrerAmis(q) {
     // Afficher un message si aucun résultat
     $liste.find('.no-results').remove();
     if (visibleCount === 0) {
-        $liste.append('<p class="text-center small no-results" style="color:var(--text-3);padding:20px;">Aucun résultat trouvé</p>');
+        $liste.append('<p class="text-center small no-results" style="color:var(--text-3);padding:20px;">' + t('Aucun résultat trouvé') + '</p>');
     }
 }
 
@@ -942,7 +942,7 @@ window.toggleParticipantGroupe = function(id, nom, photo) {
         window.participantsGroupe.push({
             id: idNum, 
             nom: String(nom || ''), 
-            photo: String(photo || 'assets/images/default_avatar.jpeg')
+            photo: String(photo || 'assets/images/default_avatar.svg')
         });
         console.log('Participant ajouté. Total:', window.participantsGroupe.length);
         if (checkIcon) {
@@ -970,15 +970,15 @@ function afficherParticipantsSelectionnes() {
     }
     
     if (!window.participantsGroupe || window.participantsGroupe.length === 0) {
-        container.innerHTML = '<small class="text-muted">Aucun participant sélectionné</small>';
+        container.innerHTML = '<small class="text-muted">' + t('Aucun participant sélectionné') + '</small>';
         return;
     }
     
     var html = '<div class="d-flex flex-wrap gap-2 align-items-center">';
-    html += '<small class="text-muted me-2">Participants (' + window.participantsGroupe.length + '):</small>';
+    html += '<small class="text-muted me-2">' + t('Participants') + ' (' + window.participantsGroupe.length + '):</small>';
     window.participantsGroupe.forEach(function(p) {
         var nomEscaped = String(p.nom).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-        var photoEscaped = String(p.photo || 'assets/images/default_avatar.jpeg').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+        var photoEscaped = String(p.photo || 'assets/images/default_avatar.svg').replace(/'/g, "&#39;").replace(/"/g, "&quot;");
         html += '<div class="d-flex align-items-center gap-1 bg-light rounded-pill px-2 py-1" style="font-size:.75rem;">';
         html += '<img src="' + photoEscaped + '" alt="" class="rounded-circle" width="20" height="20" style="object-fit:cover">';
         html += '<span>' + nomEscaped + '</span>';
@@ -992,18 +992,18 @@ function afficherParticipantsSelectionnes() {
 function creerGroupe() {
     var nomGroupe = document.getElementById('nom-groupe');
     if (!nomGroupe) {
-        alert('Erreur: champ nom introuvable.');
+        alert(t('Erreur : champ nom introuvable.'));
         return;
     }
     
     var nom = nomGroupe.value.trim();
     if (!nom) {
-        alert('Veuillez entrer un nom pour le groupe.');
+        alert(t('Veuillez entrer un nom pour le groupe.'));
         return;
     }
     
     if (!window.participantsGroupe || window.participantsGroupe.length === 0) {
-        alert('Veuillez sélectionner au moins un participant.');
+        alert(t('Veuillez sélectionner au moins un participant.'));
         return;
     }
     
@@ -1025,10 +1025,10 @@ function creerGroupe() {
             // Rediriger vers la conversation du groupe
             window.location.href = 'messagerie.php?conv=' + res.conversation_id;
         } else {
-            alert(res.message || 'Erreur lors de la création du groupe.');
+            alert(res.message || t('Erreur lors de la création du groupe.'));
         }
     }).fail(function() {
-        alert('Erreur lors de la création du groupe.');
+        alert(t('Erreur lors de la création du groupe.'));
     });
 }
 
@@ -1182,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         var id = parseInt(this.getAttribute('data-ami-id'));
                         var nom = this.getAttribute('data-ami-nom') || '';
-                        var photo = this.getAttribute('data-ami-photo') || 'assets/images/default_avatar.jpeg';
+                        var photo = this.getAttribute('data-ami-photo') || 'assets/images/default_avatar.svg';
                         
                         console.log('Clic détecté sur participant:', id, nom);
                         if (window.toggleParticipantGroupe) {
@@ -1272,7 +1272,7 @@ function sauvegarderModificationsGroupe() {
     var conversationId = <?= ($conversationActif && $conversationActif['est_groupe']) ? $convActiveId : 0 ?>;
     
     if (!conversationId) {
-        alert('Erreur: ID de conversation manquant.');
+        alert(t('Erreur : ID de conversation manquant.'));
         return;
     }
     
@@ -1292,11 +1292,11 @@ function sauvegarderModificationsGroupe() {
                 if (res.succes && res.url) {
                     modifierGroupe(conversationId, nomGroupe, res.url);
                 } else {
-                    alert(res.message || 'Erreur lors de l\'upload de la photo.');
+                    alert(res.message || t('Erreur lors de l\'upload de la photo.'));
                 }
             },
             error: function() {
-                alert('Erreur lors de l\'upload de la photo.');
+                alert(t('Erreur lors de l\'upload de la photo.'));
             }
         });
     } else {
@@ -1327,10 +1327,10 @@ function modifierGroupe(conversationId, nom, photo) {
             // Recharger la page pour voir les modifications
             window.location.reload();
         } else {
-            alert(res.message || 'Erreur lors de la modification du groupe.');
+            alert(res.message || t('Erreur lors de la modification du groupe.'));
         }
     }).fail(function() {
-        alert('Erreur lors de la modification du groupe.');
+        alert(t('Erreur lors de la modification du groupe.'));
     });
 }
 
@@ -1339,7 +1339,7 @@ function lancerAppelGroupe(type) {
     var conversationId = <?= ($conversationActif && $conversationActif['est_groupe']) ? $convActiveId : 0 ?>;
     
     if (!conversationId) {
-        alert('Erreur: ID de conversation manquant.');
+        alert(t('Erreur : ID de conversation manquant.'));
         return;
     }
     
@@ -1360,14 +1360,14 @@ function lancerAppelGroupe(type) {
                     type: type
                 }, function(res) {
                     if (res.succes) {
-                        alert('Appel de groupe lancé ! Les participants sont en train d\'être appelés.');
+                        alert(t('Appel de groupe lancé ! Les participants sont en train d\'être appelés.'));
                         // Recharger pour voir les appels
                         window.location.reload();
                     } else {
-                        alert(res.message || 'Erreur lors du lancement de l\'appel de groupe.');
+                        alert(res.message || t('Erreur lors du lancement de l\'appel de groupe.'));
                     }
                 }).fail(function() {
-                    alert('Erreur lors du lancement de l\'appel de groupe.');
+                    alert(t('Erreur lors du lancement de l\'appel de groupe.'));
                 });
             }
         }, 500);

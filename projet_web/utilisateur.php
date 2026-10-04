@@ -20,10 +20,10 @@ $profil = $stmt->fetch();
 
 if (!$profil) {
     http_response_code(404);
-    $pageTitle = 'Introuvable';
+    $pageTitle = t('Introuvable');
     include __DIR__ . '/includes/header.php';
     include __DIR__ . '/includes/navbar.php';
-    echo '<div class="glass empty-state"><i class="bi bi-person-x"></i><h5>Utilisateur introuvable</h5><a href="reseau.php" class="btn btn-ecein-primary mt-2">Retour au réseau</a></div>';
+    echo '<div class="glass empty-state"><i class="bi bi-person-x"></i><h5>' . t('Utilisateur introuvable') . '</h5><a href="reseau.php" class="btn btn-ecein-primary mt-2">' . t('Retour au réseau') . '</a></div>';
     include __DIR__ . '/includes/footer.php';
     exit();
 }
@@ -79,20 +79,20 @@ include __DIR__ . '/includes/navbar.php';
 <!-- Actions -->
 <div class="d-flex flex-wrap gap-2 mb-4">
     <?php if ($statut === 'accepte'): ?>
-    <span class="badge bg-success p-2 d-flex align-items-center"><i class="bi bi-people-fill me-1"></i>Connecté</span>
-    <a href="messagerie.php?contact=<?= $profilId ?>" class="btn btn-sm btn-ecein-primary"><i class="bi bi-chat me-1"></i>Message</a>
-    <button class="btn btn-sm btn-outline-danger" onclick="supprimerConnexion(<?= $profilId ?>, this)"><i class="bi bi-person-x me-1"></i>Ne plus suivre</button>
+    <span class="badge bg-success p-2 d-flex align-items-center"><i class="bi bi-people-fill me-1"></i><?= t('Connecté') ?></span>
+    <a href="messagerie.php?contact=<?= $profilId ?>" class="btn btn-sm btn-ecein-primary"><i class="bi bi-chat me-1"></i><?= t('Message') ?></a>
+    <button class="btn btn-sm btn-outline-danger" onclick="supprimerConnexion(<?= $profilId ?>, this)"><i class="bi bi-person-x me-1"></i><?= t('Ne plus suivre') ?></button>
     <?php elseif ($statut === 'en_attente'): ?>
-    <span class="badge p-2" style="background:var(--accent);color:#000"><i class="bi bi-clock me-1"></i>Invitation envoyée</span>
+    <span class="badge p-2" style="background:var(--accent);color:#000"><i class="bi bi-clock me-1"></i><?= t('Invitation envoyée') ?></span>
     <?php else: ?>
-    <button class="btn btn-sm btn-ecein-primary" onclick="envoyerDemande(<?= $profilId ?>, this)"><i class="bi bi-person-plus me-1"></i>Se connecter</button>
+    <button class="btn btn-sm btn-ecein-primary" onclick="envoyerDemande(<?= $profilId ?>, this)"><i class="bi bi-person-plus me-1"></i><?= t('Se connecter avec') ?></button>
     <?php endif; ?>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="glass p-4 mb-3">
-            <h6 class="fw-bold mb-3" style="font-size:.85rem">À propos</h6>
+            <h6 class="fw-bold mb-3" style="font-size:.85rem"><?= t('À propos') ?></h6>
             <?php if ($profil['biographie']): ?>
             <p class="small" style="color:var(--text-2)"><?= nl2br(h($profil['biographie'])) ?></p>
             <hr style="border-color:var(--glass-border)">
@@ -104,20 +104,20 @@ include __DIR__ . '/includes/navbar.php';
                 <?php if ($profil['site_web']): ?>
                 <li class="mb-2"><i class="bi bi-link-45deg me-2" style="color:var(--accent)"></i><a href="<?= h($profil['site_web']) ?>" target="_blank"><?= h($profil['site_web']) ?></a></li>
                 <?php endif; ?>
-                <li><i class="bi bi-calendar me-2" style="color:var(--accent)"></i>Membre depuis <?= formatDateFr($profil['date_inscription']) ?></li>
+                <li><i class="bi bi-calendar me-2" style="color:var(--accent)"></i><?= t('Membre depuis') ?> <?= formatDateFr($profil['date_inscription']) ?></li>
             </ul>
         </div>
 
         <?php if (!empty($formations)): ?>
         <div class="glass p-4">
-            <h6 class="fw-bold mb-3" style="font-size:.85rem"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i>Formations</h6>
+            <h6 class="fw-bold mb-3" style="font-size:.85rem"><i class="bi bi-mortarboard me-2" style="color:var(--accent)"></i><?= t('Formations') ?></h6>
             <?php foreach ($formations as $f): ?>
             <div class="mb-3">
                 <div class="fw-semibold small"><?= h($f['diplome']) ?></div>
                 <div style="font-size:.78rem;color:var(--accent)"><?= h($f['etablissement']) ?></div>
                 <div style="font-size:.72rem;color:var(--text-3)">
                     <?= formatDateFr($f['date_debut']) ?>
-                    <?= $f['en_cours'] ? '– Présent' : ($f['date_fin'] ? '– ' . formatDateFr($f['date_fin']) : '') ?>
+                    <?= $f['en_cours'] ? '– ' . t('Présent') : ($f['date_fin'] ? '– ' . formatDateFr($f['date_fin']) : '') ?>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -129,7 +129,7 @@ include __DIR__ . '/includes/navbar.php';
         <?php if (empty($publications)): ?>
         <div class="glass empty-state">
             <i class="bi bi-chat-square-dots"></i>
-            <p>Aucune publication visible.</p>
+            <p><?= t('Aucune publication visible.') ?></p>
         </div>
         <?php else: ?>
         <?php foreach ($publications as $post):

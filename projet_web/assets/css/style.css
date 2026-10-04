@@ -221,6 +221,25 @@ a:hover { color: #fbbf24; }
 }
 .page-title { font-weight: 700; font-size: 1.1rem; }
 
+/* ===== CHOIX DE LA LANGUE (FR / EN) ===== */
+.lang-switch {
+    display: inline-flex;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.lang-switch a {
+    padding: .3rem .7rem;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: var(--transition);
+}
+.lang-switch a:hover { color: var(--accent); }
+.lang-switch a.active { background: var(--accent); color: #fff; }
+
 .page-body { padding: 1.5rem 2rem 3rem; max-width: 1200px; }
 
 /* ===== GLASS CARD ===== */

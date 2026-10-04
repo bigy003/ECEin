@@ -7,7 +7,7 @@ requireConnexion();
 
 $pdo    = getDB();
 $userId = $_SESSION['utilisateur_id'];
-$pageTitle = 'Mon Réseau';
+$pageTitle = t('Mon Réseau');
 
 $stmtAmis = $pdo->prepare("
     SELECT u.id, u.nom, u.prenom, u.pseudo, u.photo, u.titre, u.localisation, c.date_reponse
@@ -83,7 +83,7 @@ include __DIR__ . '/includes/navbar.php';
 <section class="mb-4">
     <h6 class="fw-bold mb-3">
         <i class="bi bi-person-plus me-2" style="color:var(--accent)"></i>
-        Invitations reçues
+        <?= t('Invitations reçues') ?>
         <span class="badge bg-danger ms-1"><?= count($demandes) ?></span>
     </h6>
     <div class="row g-3">
@@ -95,10 +95,10 @@ include __DIR__ . '/includes/navbar.php';
                     <h6 class="fw-bold mb-0 small"><?= h($d['prenom'] . ' ' . $d['nom']) ?></h6>
                 </a>
                 <p class="small mb-1" style="color:var(--text-3)"><?= h($d['titre'] ?? '') ?></p>
-                <p style="font-size:.7rem;color:var(--text-3)">Reçue le <?= formatDateFr($d['date_demande']) ?></p>
+                <p style="font-size:.7rem;color:var(--text-3)"><?= t('Reçue le') ?> <?= formatDateFr($d['date_demande']) ?></p>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-ecein-primary btn-sm flex-fill" onclick="repondreInvitation(<?= $d['connexion_id'] ?>, 'accepter', this)">Accepter</button>
-                    <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="repondreInvitation(<?= $d['connexion_id'] ?>, 'refuser', this)">Refuser</button>
+                    <button class="btn btn-ecein-primary btn-sm flex-fill" onclick="repondreInvitation(<?= $d['connexion_id'] ?>, 'accepter', this)"><?= t('Accepter') ?></button>
+                    <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="repondreInvitation(<?= $d['connexion_id'] ?>, 'refuser', this)"><?= t('Refuser') ?></button>
                 </div>
             </div>
         </div>
@@ -111,12 +111,12 @@ include __DIR__ . '/includes/navbar.php';
 <section class="mb-4">
     <h6 class="fw-bold mb-3">
         <i class="bi bi-people me-2" style="color:var(--emerald)"></i>
-        Mes connexions (<?= count($amis) ?>)
+        <?= t('Mes connexions') ?> (<?= count($amis) ?>)
     </h6>
     <?php if (empty($amis)): ?>
     <div class="glass empty-state">
         <i class="bi bi-people"></i>
-        <p>Vous n'avez pas encore de connexions. Explorez les suggestions ci-dessous !</p>
+        <p><?= t('Vous n\'avez pas encore de connexions. Explorez les suggestions ci-dessous !') ?></p>
     </div>
     <?php else: ?>
     <div class="row g-3">
@@ -135,9 +135,9 @@ include __DIR__ . '/includes/navbar.php';
                 <p class="mb-2" style="font-size:.72rem;color:var(--text-3)"><i class="bi bi-geo-alt me-1"></i><?= h($ami['localisation']) ?></p>
                 <?php endif; ?>
                 <div class="d-flex gap-2">
-                    <a href="messagerie.php?contact=<?= $ami['id'] ?>" class="btn btn-sm btn-outline-primary flex-fill"><i class="bi bi-chat me-1"></i>Message</a>
-                    <button class="btn btn-sm btn-outline-danger flex-fill" onclick="supprimerConnexion(<?= $ami['id'] ?>, this)" title="Ne plus suivre"><i class="bi bi-person-x"></i></button>
-                    <a href="utilisateur.php?id=<?= $ami['id'] ?>" class="btn btn-sm btn-light flex-fill"><i class="bi bi-person me-1"></i>Profil</a>
+                    <a href="messagerie.php?contact=<?= $ami['id'] ?>" class="btn btn-sm btn-outline-primary flex-fill"><i class="bi bi-chat me-1"></i><?= t('Message') ?></a>
+                    <button class="btn btn-sm btn-outline-danger flex-fill" onclick="supprimerConnexion(<?= $ami['id'] ?>, this)" title="<?= t('Ne plus suivre') ?>"><i class="bi bi-person-x"></i></button>
+                    <a href="utilisateur.php?id=<?= $ami['id'] ?>" class="btn btn-sm btn-light flex-fill"><i class="bi bi-person me-1"></i><?= t('Profil') ?></a>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@ include __DIR__ . '/includes/navbar.php';
 <section class="mb-4">
     <h6 class="fw-bold mb-3">
         <i class="bi bi-send me-2" style="color:var(--text-3)"></i>
-        Invitations envoyées (<?= count($envoyees) ?>)
+        <?= t('Invitations envoyées') ?> (<?= count($envoyees) ?>)
     </h6>
     <div class="row g-3">
         <?php foreach ($envoyees as $e): ?>
@@ -162,9 +162,9 @@ include __DIR__ . '/includes/navbar.php';
                     <div class="flex-grow-1">
                         <div class="fw-semibold small"><?= h($e['prenom'] . ' ' . $e['nom']) ?></div>
                         <div style="font-size:.72rem;color:var(--text-3)"><?= h($e['titre'] ?? '') ?></div>
-                        <span class="badge bg-warning mt-1" style="font-size:.6rem;color:#000">En attente</span>
+                        <span class="badge bg-warning mt-1" style="font-size:.6rem;color:#000"><?= t('En attente') ?></span>
                     </div>
-                    <button class="btn btn-sm btn-outline-danger" onclick="annulerInvitation(<?= $e['connexion_id'] ?>, this)" title="Annuler">
+                    <button class="btn btn-sm btn-outline-danger" onclick="annulerInvitation(<?= $e['connexion_id'] ?>, this)" title="<?= t('Annuler') ?>">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
@@ -180,7 +180,7 @@ include __DIR__ . '/includes/navbar.php';
 <section class="mb-4">
     <h6 class="fw-bold mb-3">
         <i class="bi bi-lightbulb me-2" style="color:var(--accent)"></i>
-        Personnes que vous pourriez connaître
+        <?= t('Personnes que vous pourriez connaître') ?>
     </h6>
     <div class="row g-3">
         <?php foreach ($suggestions as $sugg): ?>
@@ -192,10 +192,10 @@ include __DIR__ . '/includes/navbar.php';
                 </a>
                 <p class="small mb-0" style="color:var(--text-3)"><?= h(substr($sugg['titre'] ?? '', 0, 55)) ?></p>
                 <p class="mb-2" style="font-size:.72rem;color:var(--text-3)">
-                    <i class="bi bi-people me-1"></i><?= $sugg['amis_communs'] ?> ami<?= $sugg['amis_communs'] > 1 ? 's' : '' ?> en commun
+                    <i class="bi bi-people me-1"></i><?= $sugg['amis_communs'] > 1 ? t('%d amis en commun', $sugg['amis_communs']) : t('%d ami en commun', $sugg['amis_communs']) ?>
                 </p>
                 <button class="btn btn-outline-primary btn-sm w-100" onclick="envoyerDemande(<?= $sugg['id'] ?>, this)">
-                    <i class="bi bi-person-plus me-1"></i>Se connecter
+                    <i class="bi bi-person-plus me-1"></i><?= t('Se connecter avec') ?>
                 </button>
             </div>
         </div>

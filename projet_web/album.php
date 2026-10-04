@@ -47,20 +47,20 @@ include __DIR__ . '/includes/navbar.php';
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <a href="profil.php?onglet=albums" class="btn btn-sm btn-light mb-2">
-            <i class="bi bi-arrow-left me-1"></i>Retour aux albums
+            <i class="bi bi-arrow-left me-1"></i><?= t('Retour aux albums') ?>
         </a>
         <h4 class="fw-bold mb-1"><?= h($album['nom']) ?></h4>
         <?php if ($album['description']): ?>
         <p class="mb-0" style="color:var(--text-3)"><?= h($album['description']) ?></p>
         <?php endif; ?>
         <p class="small mb-0" style="color:var(--text-3)">
-            <i class="bi bi-calendar me-1"></i>Créé le <?= formatDateFr($album['date_creation']) ?>
-            <span class="ms-3"><i class="bi bi-images me-1"></i><?= count($photos) ?> photo<?= count($photos) > 1 ? 's' : '' ?></span>
+            <i class="bi bi-calendar me-1"></i><?= t('Créé le') ?> <?= formatDateFr($album['date_creation']) ?>
+            <span class="ms-3"><i class="bi bi-images me-1"></i><?= count($photos) ?> <?= count($photos) > 1 ? t('photos') : t('photo') ?></span>
         </p>
     </div>
     <div>
         <button class="btn btn-ecein-primary" onclick="ouvrirModalAjouterPhoto(<?= $albumId ?>)">
-            <i class="bi bi-plus-lg me-1"></i>Ajouter des photos
+            <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter des photos') ?>
         </button>
     </div>
 </div>
@@ -68,9 +68,9 @@ include __DIR__ . '/includes/navbar.php';
 <?php if (empty($photos)): ?>
 <div class="glass empty-state">
     <i class="bi bi-images"></i>
-    <p>Cet album est vide. Ajoutez des photos !</p>
+    <p><?= t('Cet album est vide. Ajoutez des photos !') ?></p>
     <button class="btn btn-ecein-primary mt-2" onclick="ouvrirModalAjouterPhoto(<?= $albumId ?>)">
-        <i class="bi bi-plus-lg me-1"></i>Ajouter des photos
+        <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter des photos') ?>
     </button>
 </div>
 <?php else: ?>
@@ -84,15 +84,15 @@ include __DIR__ . '/includes/navbar.php';
             <div class="position-absolute top-0 end-0 m-2">
                 <div class="btn-group-vertical">
                     <?php if ($album['couverture'] !== $photo['fichier']): ?>
-                    <button class="btn btn-sm btn-light" onclick="definirCouverture(<?= $albumId ?>, <?= $photo['id'] ?>)" title="Définir comme couverture">
+                    <button class="btn btn-sm btn-light" onclick="definirCouverture(<?= $albumId ?>, <?= $photo['id'] ?>)" title="<?= t('Définir comme couverture') ?>">
                         <i class="bi bi-star"></i>
                     </button>
                     <?php else: ?>
-                    <button class="btn btn-sm btn-ecein-primary" title="Photo de couverture">
+                    <button class="btn btn-sm btn-ecein-primary" title="<?= t('Photo de couverture') ?>">
                         <i class="bi bi-star-fill"></i>
                     </button>
                     <?php endif; ?>
-                    <button class="btn btn-sm btn-light" onclick="retirerPhoto(<?= $albumId ?>, <?= $photo['id'] ?>)" title="Retirer de l'album">
+                    <button class="btn btn-sm btn-light" onclick="retirerPhoto(<?= $albumId ?>, <?= $photo['id'] ?>)" title="<?= t('Retirer de l\'album') ?>">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
@@ -113,7 +113,7 @@ include __DIR__ . '/includes/navbar.php';
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bold">Ajouter des photos à l'album</h5>
+                <h5 class="modal-title fw-bold"><?= t('Ajouter des photos à l\'album') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -121,15 +121,15 @@ include __DIR__ . '/includes/navbar.php';
                 <div class="row g-2" id="liste-photos-disponibles">
                     <div class="col-12 text-center py-4">
                         <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Chargement...</span>
+                            <span class="visually-hidden"><?= t('Chargement...') ?></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><?= t('Annuler') ?></button>
                 <button type="button" class="btn btn-ecein-primary" id="btn-ajouter-photos" onclick="ajouterPhotosSelectionnees()" style="display:none">
-                    <i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">0</span> photo(s)
+                    <i class="bi bi-plus-lg me-1"></i><?= t('Ajouter') ?> <span id="nb-photos-selectionnees">0</span> <?= t('photo(s)') ?>
                 </button>
             </div>
         </div>
@@ -147,7 +147,7 @@ function ouvrirModalAjouterPhoto(albumId) {
     mettreAJourBoutonAjouter();
     
     // Afficher le spinner
-    document.getElementById('liste-photos-disponibles').innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Chargement...</span></div></div>';
+    document.getElementById('liste-photos-disponibles').innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">' + t('Chargement...') + '</span></div></div>';
     
     // Charger les photos disponibles via AJAX
     $.get('api/albums.php', { action: 'photos_disponibles', album_id: albumId }, function(res) {
@@ -159,10 +159,10 @@ function ouvrirModalAjouterPhoto(albumId) {
             });
             container.innerHTML = html;
         } else {
-            container.innerHTML = '<div class="col-12 text-center py-4"><i class="bi bi-images fs-1" style="color:var(--text-3);opacity:.25"></i><p class="mt-2">Aucune photo disponible à ajouter.</p><p class="small text-muted">Publiez d\'abord des photos depuis la page d\'accueil.</p></div>';
+            container.innerHTML = '<div class="col-12 text-center py-4"><i class="bi bi-images fs-1" style="color:var(--text-3);opacity:.25"></i><p class="mt-2">' + t('Aucune photo disponible à ajouter.') + '</p><p class="small text-muted">' + t('Publiez d\'abord des photos depuis la page d\'accueil.') + '</p></div>';
         }
     }).fail(function() {
-        document.getElementById('liste-photos-disponibles').innerHTML = '<div class="col-12 text-center py-4"><p class="text-danger">Erreur lors du chargement des photos.</p></div>';
+        document.getElementById('liste-photos-disponibles').innerHTML = '<div class="col-12 text-center py-4"><p class="text-danger">' + t('Erreur lors du chargement des photos.') + '</p></div>';
     });
     
     const modal = new bootstrap.Modal(document.getElementById('modalAjouterPhoto'));
@@ -207,7 +207,7 @@ function ajouterPhotosSelectionnees() {
     
     const btn = document.getElementById('btn-ajouter-photos');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Ajout en cours...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>' + t('Ajout en cours...');
     
     let ajoutes = 0;
     let erreurs = 0;
@@ -222,24 +222,24 @@ function ajouterPhotosSelectionnees() {
             ajoutes++;
             if (ajoutes + erreurs === total) {
                 if (ajoutes > 0) {
-                    afficherToast(ajoutes + ' photo(s) ajoutée(s) à l\'album.', 'success');
+                    afficherToast(t("%d photo(s) ajoutée(s) à l'album.", ajoutes), 'success');
                     setTimeout(() => location.reload(), 500);
                 } else {
-                    afficherToast('Aucune photo n\'a pu être ajoutée.', 'danger');
+                    afficherToast(t('Aucune photo n\'a pu être ajoutée.'), 'danger');
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">' + total + '</span> photo(s)';
+                    btn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>' + t('Ajouter') + ' <span id="nb-photos-selectionnees">' + total + '</span> ' + t('photo(s)');
                 }
             }
         }).fail(function() {
             erreurs++;
             if (ajoutes + erreurs === total) {
                 if (ajoutes > 0) {
-                    afficherToast(ajoutes + ' photo(s) ajoutée(s), ' + erreurs + ' erreur(s).', 'warning');
+                    afficherToast(t('%d photo(s) ajoutée(s), %d erreur(s).', ajoutes, erreurs), 'warning');
                     setTimeout(() => location.reload(), 500);
                 } else {
-                    afficherToast('Erreur lors de l\'ajout des photos.', 'danger');
+                    afficherToast(t('Erreur lors de l\'ajout des photos.'), 'danger');
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>Ajouter <span id="nb-photos-selectionnees">' + total + '</span> photo(s)';
+                    btn.innerHTML = '<i class="bi bi-plus-lg me-1"></i>' + t('Ajouter') + ' <span id="nb-photos-selectionnees">' + total + '</span> ' + t('photo(s)');
                 }
             }
         });
@@ -247,7 +247,7 @@ function ajouterPhotosSelectionnees() {
 }
 
 function retirerPhoto(albumId, publicationId) {
-    if (!confirm('Retirer cette photo de l\'album ?')) return;
+    if (!confirm(t('Retirer cette photo de l\'album ?'))) return;
     
     $.post('api/albums.php', {
         action: 'retirer_photo',
