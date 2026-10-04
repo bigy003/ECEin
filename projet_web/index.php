@@ -39,7 +39,7 @@ $pageScript  = 'posts.js'; // Script JavaScript à charger (gestion des publicat
  * - La réaction de l'utilisateur actuel (s'il en a une)
  * - Les infos de la publication originale (si c'est un partage)
  * 
- * Limite : 30 publications les plus récentes
+ * Limite : 50 publications les plus récentes
  */
 $stmtPosts = $pdo->prepare("
     SELECT p.*, u.nom, u.prenom, u.photo AS avatar, u.pseudo, u.titre AS user_titre,
@@ -60,7 +60,7 @@ $stmtPosts = $pdo->prepare("
             WHERE (demandeur_id = :uid4 OR destinataire_id = :uid5) AND statut = 'accepte'
        ))
     ORDER BY p.date_publication DESC
-    LIMIT 30
+    LIMIT 50
 ");
 $stmtPosts->execute([
     ':uid'  => $userId,
