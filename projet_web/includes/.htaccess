@@ -1,0 +1,2 @@
+# Dossier interne : inclus par PHP, jamais appelé directement depuis le navigateur
+Require all denied
